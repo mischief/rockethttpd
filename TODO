@@ -1,0 +1,16 @@
+updated [2009-04-30 16:01]
+
+*	instead of just showing the end-user what happened during an error
+	(500, 404, etc), start setting errno and use perror/strerror to
+	show what the hell was going on on the console.
+
+*	make the log more apache-style, including user ip, user agent, etc
+
+*	start adding debugging levels. 3 should be good.
+	 it will make the code messy though. :(
+
+*	make files transfers buffered, don't load the whole file into memory before sending it.
+
+*	make it compile under cygwin
+
+*	port to windows!

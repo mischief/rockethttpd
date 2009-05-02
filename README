@@ -1,0 +1,17 @@
+Rocket HTTPD
+
+* Building and Installing
+
+To build Rocket HTTPD, execute 'make' in the root directory.
+For an example of Rocket HTTPD at work, execute './rockethttpd 8080 www/',
+and visit http://localhost:8080/index.html .
+
+* Other
+
+For a list of things to do, see TODO file. For a list of changes,
+see the ChangeLog file.
+
+* License
+
+This program is distributed under the terms of the GNU General Public
+License version 2 or later. See the COPYING file for details.
