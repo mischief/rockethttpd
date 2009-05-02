@@ -13,6 +13,6 @@ void error_code_to_data(http_data_out *);
 /*	helper function to the above, it fills out the data/header
 	based on the http code. */
 
-void make_error_data(char *buf, http_data_out *out, http_status_code code, char *code1, char *code2);
+void fill_error_template(char *buf, http_data_out *out, http_status_code code, char *code1, char *code2);
 
 #endif

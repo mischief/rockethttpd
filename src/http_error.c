@@ -10,22 +10,22 @@ void error_code_to_data(http_data_out *out) {
 	char buf[2 * KILOBYTE] = {0};
 	switch(code) {
 		case HTTP_BAD_REQUEST:
-			make_error_data(buf, out, code, "400 Bad Request", "The request could not be understood by the server due to malformed syntax.");
+			fill_error_template(buf, out, code, "400 Bad Request", "The request could not be understood by the server due to malformed syntax.");
 			break;
 		case HTTP_NOT_FOUND:
-			make_error_data(buf, out, code, "404 Not Found", "The server was unable to find the resource specified.");
+			fill_error_template(buf, out, code, "404 Not Found", "The server was unable to find the resource specified.");
 			break;
 		case HTTP_URI_TOO_LONG:
-			make_error_data(buf, out, code, "414 Request-URI Too Long", "The Reqest-URI is too long.");
+			fill_error_template(buf, out, code, "414 Request-URI Too Long", "The Reqest-URI is too long.");
 			break;
 		case HTTP_INTERNAL_ERROR:
-			make_error_data(buf, out, code, "500 Internal Server Error", "The server encountered an unexpected condition which prevented it from fulfilling the request.");
+			fill_error_template(buf, out, code, "500 Internal Server Error", "The server encountered an unexpected condition which prevented it from fulfilling the request.");
 			break;
 		case HTTP_NOT_IMPLEMENTED:
-			make_error_data(buf, out, code, "501 Not Implemented", "The server does not support the functionality required to fulfill the request.");
+			fill_error_template(buf, out, code, "501 Not Implemented", "The server does not support the functionality required to fulfill the request.");
 			break;
 		case HTTP_VERSION_UNSUPPORTED:
-			make_error_data(buf, out, code, "505 HTTP Version Not Supported", "The server does not support the HTTP version requested.");
+			fill_error_template(buf, out, code, "505 HTTP Version Not Supported", "The server does not support the HTTP version requested.");
 			break;
 		case HTTP_OK:
 			// we shouldn't even get here...
@@ -35,7 +35,7 @@ void error_code_to_data(http_data_out *out) {
 	}
 }
 
-void make_error_data(char *buf, http_data_out *out, http_status_code code, char *code1, char *code2) {
+void fill_error_template(char *buf, http_data_out *out, http_status_code code, char *code1, char *code2) {
 	/* first get the error content */
 	sprintf(buf, error_skel, code1, code1, code2);
 	out->data = (char *) malloc(strlen(buf)+1);
