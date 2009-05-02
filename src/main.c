@@ -1,3 +1,5 @@
+#include "defs.h"
+
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -26,7 +28,7 @@
 #include "thread.h"
 #include "common_types.h"
 #include "networking.h"
-#include "defs.h"
+
 
 void usage(char *prog)
 {
@@ -61,7 +63,7 @@ int main(int argc, char **argv)
 		/* doesn't return */
 		usage(argv[0]);
 	}
-	
+
 	char *port = argv[1];
 	char servip[INET6_ADDRSTRLEN];
 	char servport[20];
@@ -95,7 +97,7 @@ int main(int argc, char **argv)
 	}
 
 	// completely stolen from beej, loop through the results and bind on the first possible address
-	
+
 	struct addrinfo *addr = {0}; // temporary, used for this loop only
 	for(addr = servinfo; addr != NULL; addr = addr->ai_next)
 	{
@@ -127,7 +129,7 @@ int main(int argc, char **argv)
 	}
 
 	/* figure out who we are */
-		
+
 	if ( (rv = getnameinfo(addr->ai_addr, addr->ai_addrlen, servip, sizeof(servip), servport, sizeof(servport), 0)) != 0) {
 		fprintf(stderr, "[-] in file \"%s\", line %d: getnameinfo: %s\n", __FILE__, __LINE__, gai_strerror(rv));
 		return EXIT_FAILURE;
@@ -158,7 +160,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "[-] in file \"%s\", line %d: listen: %s\n", __FILE__, __LINE__, strerror(errno));
 		return EXIT_FAILURE;
 	}
-	
+
 	printf("[+] %s: waiting for connections on %s:%s\n", VERSION, servip, port);
 
 	/* main server loop */

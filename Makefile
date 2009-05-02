@@ -6,7 +6,7 @@ OUTPUT = rockethttpd
 
 VPATH = src
 
-OBJECTS = main.o thread.o http.o networking.o dir.o data_templates.o
+OBJECTS = main.o thread.o http.o http_helper.o http_error.o networking.o dir.o data_templates.o
 
 $(OUTPUT) : $(OBJECTS) -lpthread
 	$(CC) $(CFLAGS) -o $@ $^
@@ -16,6 +16,10 @@ main.o : main.c thread.h common_types.h networking.h defs.h
 thread.o : thread.c thread.h http.h networking.h common_types.h defs.h
 	$(CC) -c $(CFLAGS) $< -o $@
 http.o : http.c http.h common_types.h networking.h defs.h
+	$(CC) -c $(CFLAGS) $< -o $@
+http_helper.o : http_helper.c defs.h common_types.h
+	$(CC) -c $(CFLAGS) $< -o $@
+http_error.o : http_error.c defs.h common_types.h http_helper.h
 	$(CC) -c $(CFLAGS) $< -o $@
 networking.o : networking.c networking.h common_types.h
 	$(CC) -c $(CFLAGS) $< -o $@

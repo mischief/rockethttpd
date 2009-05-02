@@ -8,13 +8,13 @@
 #define SOURCE	"http://code.google.com/p/rockethttpd/"
 #define VERSTRING PROGRAM " " VERSION " by " AUTHOR " " EMAIL " " SOURCE
 
+// we are in fact debugging!
+#define DEBUG 1
+
 /* used for debugging stuff */
-#define BARK if(DEBUG) printf("[-] file %s, line %d: ", __FILE__, __LINE__)
+#define BARK if(DEBUG) printf("[-] file \"%s\", line %d: ", __FILE__, __LINE__)
 
 // number of connections pending in the queue
 #define BACKLOG 50
-
-// we are in fact debugging!
-#define DEBUG 1
 
 #endif

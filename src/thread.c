@@ -1,38 +1,38 @@
 #include "thread.h"
-#include "thread.h"
 
 void *dispatch_request(void *arg)
 {
-        connection c;
+	connection c;
 	memset(&c, 0, sizeof(connection));
 
+	/* our 'connection' needs to know who we are connected to */
 	c.conn = (connection_data *) arg;
 
 	/* bitch who are you. */
 	int rv = getnameinfo((struct sockaddr *) &(c.conn->client), c.conn->client_socksize, c.conn->clientip,
-sizeof(c.conn->clientip), c.conn->clientport, sizeof(c.conn->clientport), NI_NUMERICHOST | NI_NUMERICSERV);
-        if ( rv != 0) {
-                fprintf(stderr, "[-] in file \"%s\", line %d: getnameinfo: error %d: %s\n", __FILE__, __LINE__, rv, gai_strerror(rv));
+		sizeof(c.conn->clientip), c.conn->clientport, sizeof(c.conn->clientport), NI_NUMERICHOST | NI_NUMERICSERV);
+	if ( rv != 0) {
+		fprintf(stderr, "[-] in file \"%s\", line %d: getnameinfo: error %d: %s\n", __FILE__, __LINE__, rv, gai_strerror(rv));
 		//return EXIT_FAILURE;
-        }
+	}
 
 	print_con_dat(c.conn); printf("connection established\n");
 
-        int in = 0,	// bytes in
-        out = 0,	// bytes out
-        nbytes = 0;
+	int in = 0,	/* bytes in */
+	out = 0,	/* bytes out */
+	nbytes = 0;
 
-	char buf[8 * KILOBYTE]; // hold our data temporarily
-	memset(buf, 0, sizeof(buf));
+	/* hold our data temporarily */
+	char buf[8 * KILOBYTE] = {0};
 
 	if((nbytes = read(c.conn->socket, buf, sizeof(buf) )) <= 0)
 	{
 		if(nbytes == 0)
 		{
-			// connection closed, what to do :(
+			/* connection closed, what to do? */
 		} else
 		{
-			// we have a problem :(
+			/* -1, we have a problem :( */
 			fprintf(stderr, "[-] in file \"%s\", line %d: recv: %s\n", __FILE__, __LINE__, strerror(errno));
 		}
 	} else

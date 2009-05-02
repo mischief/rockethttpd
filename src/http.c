@@ -5,11 +5,7 @@ extern const char *reply_header;
 extern const char *fallback_mime;
 extern const MIMEtype mime_types[];
 
-const int parse_http_request(char *data, const size_t len, connection *ret)
-{
-	//char buf[8 * KILOBYTE];
-	//memset(buf, 0, sizeof(buf));
-	//memset(ret, 0, sizeof(connection_data));
+const int parse_http_request(char *data, const size_t len, connection *ret) {
 
 	char *tok, *state;
 	char *subtok, *substate;
@@ -30,15 +26,10 @@ const int parse_http_request(char *data, const size_t len, connection *ret)
 				}
 				strcpy(ret->req.request_method, subtok);
 				/* okay, now figure out what method that was. */
-                                if( !strcmp(subtok, "GET") || !strcmp(subtok, "get") )  {
-                                        ret->req.request_type = GET;
-                                } else if( !strcmp(subtok, "POST") || !strcmp(subtok, "post") ) {
-                                        ret->req.request_type = POST;
-				} else if( !strcmp(subtok, "HEAD") || !strcmp(subtok, "head") ) {
-					ret->req.request_type = HEAD;
-				} else {
-					/* okay, so if it isn't one of those, it's invalid. good day sir.*/
-					ret->req.request_type = INVALID;
+				ret->req.request_type = get_request_type(subtok);
+
+				/* okay, so if it isn't one of those, it's invalid. good day sir.*/
+				if(ret->req.request_type == INVALID) {
 					ret->response.status = HTTP_BAD_REQUEST;
 					return -1;
 				}
@@ -62,7 +53,7 @@ const int parse_http_request(char *data, const size_t len, connection *ret)
 
 			if( (subtok = strtok_r(NULL, " ", &substate)) != NULL ) {
 				if(strlen(subtok) > 20) {
-					/* okay, not the idiot is sending a HTTP version that is too big for our buffer. */
+					/* okay, now the idiot is sending a HTTP version that is too big for our buffer. */
                                         ret->req.request_type = INVALID;
 					ret->response.status = HTTP_VERSION_UNSUPPORTED;
                                         return -1;
@@ -82,8 +73,7 @@ const int parse_http_request(char *data, const size_t len, connection *ret)
 
 const int fulfill_request(connection *ret) {
 	http_status_code status = HTTP_OK; // eh?
-	char buf[8 * KILOBYTE];
-	memset(buf, 0, sizeof(buf));
+	char buf[8 * KILOBYTE] = {0};
 	char badstr[2][4] = { "../", "/" };
 
 	/* important: check if it's something bad! */
@@ -210,132 +200,4 @@ void connection_destroy(connection *p) {
 
 	/* hit the big red button */
 	memset(p, 0, sizeof(connection));
-}
-
-void url_decode(char *dest, const char *src) {
-	/*	assume that dest is at least as large as src.
-		if the guy on the other end can't do at least that. plzdie. */
-	const char *p = src;
-	char code[3] = {0};
-	unsigned long ascii = 0;
-	char *end = NULL;
-
-	while(*p) {
-			// example: %20
-		if(*p == '%') {
-			// copy everything after % to code, which is now "20\0"
-			memcpy(code, ++p, 2);
-			// convert string to unsigned long, in base 16 (hex).
-			ascii = strtoul(code, &end, 16);
-			// now put that char in dest.
-			*dest = (char)ascii;
-			// increase dest one
-			dest++;
-			// and increase p 2, since we read 2 chars for the hex code
-			p += 2;
-		} else {
-			// if we don't have a % character, just copy the character and advance the pointers.
-			*dest++ = *p++;
-		}
-	}
-	//  this should cause the end of dest to be a null character..
-	dest = 0;
-}
-/* this function, along with the two following it, generate our error messages. yay! */
-
-void error_code_to_data(http_data_out *out) {
-	http_status_code code = out->status;
-	char buf[2 * KILOBYTE];
-	switch(code) {
-        case HTTP_BAD_REQUEST:
-		make_error_data(buf, out, code, "400 Bad Request", "The request could not be understood by the server due to malformed syntax.");
-		break;
-        case HTTP_NOT_FOUND:
-		make_error_data(buf, out, code, "404 Not Found", "The server was unable to find the resource specified.");
-                break;
-        case HTTP_URI_TOO_LONG:
-		make_error_data(buf, out, code, "414 Request-URI Too Long", "The Reqest-URI is too long.");
-                break;
-        case HTTP_INTERNAL_ERROR:
-		make_error_data(buf, out, code, "500 Internal Server Error", "The server encountered an unexpected condition which prevented it from fulfilling the request.");
-                break;
-        case HTTP_NOT_IMPLEMENTED:
-		make_error_data(buf, out, code, "501 Not Implemented", "The server does not support the functionality required to fulfill the request.");
-                break;
-        case HTTP_VERSION_UNSUPPORTED:
-                make_error_data(buf, out, code, "505 HTTP Version Not Supported", "The server does not support the HTTP version requested.");
-                break;
-	case HTTP_OK:
-		// we shouldn't even get here...
-		break;
-	default:
-		break;
-        }
-}
-
-void make_error_data(char *buf, http_data_out *out, http_status_code code, char *code1, char *code2) {
-	/* first get the error content */
-	sprintf(buf, error_skel, code1, code1, code2);
-	out->data = (char *) malloc(strlen(buf)+1);
-	strcpy(out->data, buf);
-	out->content_size = strlen(out->data);
-
-	/* now make a nice header */
-	/* the error message has hard-coded mime type of "text/html" */
-	sprintf(buf, reply_header, http_code_to_str(code), "text/html", out->content_size, VERSION);
-	/* size of the header code + 1 for null */
-	out->header = (char *) malloc(strlen(buf)+1);
-	strcpy(out->header, buf);
-	out->header_size = strlen(out->header);
-}
-
-const char *http_code_to_str(http_status_code x) {
-	// turn our status code into a string so that the browser knows what is going on
-	switch(x) {
-	case HTTP_OK:
-		return "HTTP/1.1 200 OK";
-		break;
-	case HTTP_BAD_REQUEST:
-		return "HTTP/1.1 400 Bad Request";
-		break;
-	case HTTP_NOT_FOUND:
-		return "HTTP/1.1 404 Not Found";
-		break;
-	case HTTP_URI_TOO_LONG:
-		return "HTTP/1.1 414 Request-URI Too Long";
-		break;
-	case HTTP_INTERNAL_ERROR:
-		return "HTTP/1.1 500 Internal Server Error";
-		break;
-	case HTTP_NOT_IMPLEMENTED:
-		return "HTTP/1.1 501 Not Implemented";
-		break;
-	case HTTP_VERSION_UNSUPPORTED:
-		return "HTTP/1.1 505 HTTP Version Not Supported";
-		break;
-	default:
-		return "HTTP/1.1 200 OK";
-		break;
-	}
-}
-
-/* this function goes ahead and figures out a MIME
-type from the resource that the guy requested.
-maybe this should be changed so it checks against the actual file,
-not what the user requested. */
-
-const char *get_mime_type(char *resource) {
-	int i, len_mime, len = strlen(resource);
-
-	/* go through our fat struct array looking for a mime type
-	until we hit the sentinel. */
-	for(i=0;mime_types[i].ext != 0;i++) {
-		len_mime = strlen(mime_types[i].ext);
-		if( strncmp(&resource[len-len_mime], mime_types[i].ext, len_mime) == 0) {
-			return mime_types[i].mimetype;
-		}
-	}
-
-	/* okay, no dice there. send the default. */
-	return fallback_mime;
 }

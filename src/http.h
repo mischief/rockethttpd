@@ -1,13 +1,14 @@
 #ifndef HTTP_H
 #define HTTP_H
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
+#include "defs.h"
 #include "common_types.h"
 #include "networking.h"
-#include "defs.h"
+#include "http_helper.h"
+#include "http_error.h"
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
 
 // this is a pointer to the data recieved from the client.
 // the length of the data recieved from the client.
@@ -32,31 +33,8 @@ const int get_that_file(connection *);
 
 void connection_destroy(connection *p);
 
-/*	reads characters from src, decoding encoded valuesinto dest.
-	might be an attack vector if the function wasn't written right. */
-
-void url_decode(char *dest, const char *src);
-
 /*	here is how we know what error happened!
 	reads the status code, and then makes some text based on it.
 	it kindly fills the data buffer, and the header for us. */
-
-void error_code_to_data(http_data_out *);
-
-/*	helper function to the above, it fills out the data/header
-	based on the http code. */
-
-void make_error_data(char *buf, http_data_out *out, http_status_code code, char *code1, char *code2);
-
-/*	another function related to teh codez,
-	 this one gives us a header string depending on the http code. */
-
-const char *http_code_to_str(http_status_code x);
-
-/*	this returns a mime type based on the resource given,
-	by checking the file extension at the end.
-	defaults to application/octet-stream */
-
-const char *get_mime_type(char *resource);
 
 #endif
