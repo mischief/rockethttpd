@@ -1,12 +1,20 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-#define VERSION "Rocket HTTPD 0.1.3"
+#define PROGRAM	"Rocket HTTPD"
+#define VERSION	"v0.1.3"
+#define AUTHOR	"mischief"
+#define EMAIL	"<this.is.srs.bsns@gmail.com>"
+#define SOURCE	"http://code.google.com/p/rockethttpd/"
+#define VERSTRING PROGRAM " " VERSION " by " AUTHOR " " EMAIL " " SOURCE
 
-#define BARK printf("[-] file %s, line %d: ", __FILE__, __LINE__)
+/* used for debugging stuff */
+#define BARK if(DEBUG) printf("[-] file %s, line %d: ", __FILE__, __LINE__)
 
-#define BACKLOG 50 // number of connections pending in the queue
+// number of connections pending in the queue
+#define BACKLOG 50
 
-#define DEBUG // we are in fact debugging!
+// we are in fact debugging!
+#define DEBUG 1
 
 #endif

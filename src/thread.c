@@ -1,17 +1,5 @@
 #include "thread.h"
-#include "common_types.h"
-#include "networking.h"
-#include "http.h"
-#include "defs.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
-#include <pthread.h>
-
-#include <sys/types.h>
-#include <sys/socket.h>
+#include "thread.h"
 
 void *dispatch_request(void *arg)
 {
@@ -21,19 +9,19 @@ void *dispatch_request(void *arg)
 	c.conn = (connection_data *) arg;
 
 	/* bitch who are you. */
-	int rv = getnameinfo((struct sockaddr *) &(c.conn->client), c.conn->client_socksize, c.conn->clientip, 
+	int rv = getnameinfo((struct sockaddr *) &(c.conn->client), c.conn->client_socksize, c.conn->clientip,
 sizeof(c.conn->clientip), c.conn->clientport, sizeof(c.conn->clientport), NI_NUMERICHOST | NI_NUMERICSERV);
         if ( rv != 0) {
                 fprintf(stderr, "[-] in file \"%s\", line %d: getnameinfo: error %d: %s\n", __FILE__, __LINE__, rv, gai_strerror(rv));
 		//return EXIT_FAILURE;
         }
 
-	print_con_dat(c.conn); printf("connection established\n");        
-        
+	print_con_dat(c.conn); printf("connection established\n");
+
         int in = 0,	// bytes in
         out = 0,	// bytes out
         nbytes = 0;
-        
+
 	char buf[8 * KILOBYTE]; // hold our data temporarily
 	memset(buf, 0, sizeof(buf));
 
@@ -62,7 +50,7 @@ sizeof(c.conn->clientip), c.conn->clientport, sizeof(c.conn->clientport), NI_NUM
 			fprintf(stderr, "[-] in file \"%s\", line %d: fulfill_request: something bad happened: %d\n", __FILE__, __LINE__, client_req.response.status);
 			*/
 		}
-		
+
 		/* send the header first*/
 		nbytes = c.response.header_size;
 		//printf("[+] %s <-> %s: sending %d bytes of header data\n", c.conn->serverip, c.conn->clientip, nbytes);

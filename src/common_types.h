@@ -16,7 +16,7 @@ typedef enum {
 	GET = 500,
 	POST,
 	HEAD,
-	
+
 	INVALID = 666 // represends a bad request type
 } http_request_type;
 
@@ -66,7 +66,7 @@ typedef struct {
 	/* server data */
 	char serverip[NI_MAXHOST];
 	char port[NI_MAXSERV];
-	
+
 } connection_data;
 
 /* structure to hold the entire http request AND response. \o/ */

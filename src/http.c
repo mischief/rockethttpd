@@ -1,59 +1,9 @@
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include "common_types.h"
-#include "networking.h"
 #include "http.h"
-#include "defs.h"
 
-const char error_skel[] = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\r\n<title>%s</title>\r\n</head>\r\n<body>\r\n<h1>%s</h1><p>%s</p>\r\n</body>\r\n</html>\r\n";
-
-/*	see this for info on the reply skeleton
-	http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html
-*/
-
-const char reply_header[] =   "%s\r\n" // Status-Line
-			"Content-Type: %s\r\n"
-                        "Connection: close\r\n"
-                        "Content-Length: %lu\r\n" // ret->response.content_size
-                        "Server: %s\r\n\r\n"; // VERSION
-
-
-/* set default mime-type here */
-const char *fallback_mime = "application/octet-stream";
-
-/* array of mime-type structs, see common_types.h */
-const MIMEtype mime_types[] = {
-
-	/* text */
-	{	"html",	"text/html"			}, /* .html */
-	{	"htm",	"text/html"			}, /* .htm */
-	{	"css",	"text/css"			}, /* .css */
-	{	"js",	"application/javascript"	}, /* .js */
-	{	"xhtml","application/xhtml+xml"		}, /* .xhtml */
-	/* images */
-	{	"gif",	"image/gif"			}, /* .gif */
-	{	"jpg",	"image/jpeg"			}, /* .jpg */
-	{	"jpeg",	"image/jpeg"			}, /* .jpeg */
-	{	"png",	"image/png"			}, /* .png */
-	{	"ico",	"image/x-icon"			}, /* .ico */
-	/* audio */
-	{	"mp3", 	"audio/mpeg"			}, /* .mp3 */
-	{	"ogg",	"application/ogg"		}, /* .ogg */
-	/* archives */
-	{	"7z",	"application/x-7z-compressed"	}, /* .7z */
-	{	"rar",	"application/x-rar-compressed"	}, /* .rar */
-	{	"bz2",	"application/x-bzip"		}, /* .bz2 */
-	{	"zip",	"application/zip"		}, /* .zip */
-	{	"gz",	"application/x-gzip"		}, /* .gz */
-	{	"tar",	"application/x-tar"		}, /* .tar */
-	/* other */
-	{	"pdf",	"application/pdf"		}, /* .pdf */
-	/* sentinel, do not remove */
-	{0,0}
-};
-
+extern const char *error_skel;
+extern const char *reply_header;
+extern const char *fallback_mime;
+extern const MIMEtype mime_types[];
 
 const int parse_http_request(char *data, const size_t len, connection *ret)
 {
@@ -93,7 +43,7 @@ const int parse_http_request(char *data, const size_t len, connection *ret)
 					return -1;
 				}
 			}
-			/* so apparently for these subsequent calls to strtok_r, 
+			/* so apparently for these subsequent calls to strtok_r,
 			the first param has to be null if i expect this to work right */
 
 			/* okay, now parse the HTTP resource string. */
@@ -109,7 +59,8 @@ const int parse_http_request(char *data, const size_t len, connection *ret)
 				}
 			}
 
-			if( (subtok = strtok_r(NULL, " ", &substate)) != NULL ) { // http version!
+
+			if( (subtok = strtok_r(NULL, " ", &substate)) != NULL ) {
 				if(strlen(subtok) > 20) {
 					/* okay, not the idiot is sending a HTTP version that is too big for our buffer. */
                                         ret->req.request_type = INVALID;
@@ -169,7 +120,7 @@ const int fulfill_request(connection *ret) {
 	/* okay, content is dealt with. now make a correct header to send back */
 
 	/* shitty attempt at a half-decent header */
-	sprintf(buf, reply_header, http_code_to_str(status), ret->response.mimetype, ret->response.content_size, VERSION);
+	sprintf(buf, reply_header, http_code_to_str(status), ret->response.mimetype, ret->response.content_size, PROGRAM " " VERSION);
 	ret->response.header_size = strlen(buf);
 	ret->response.header = (char *) malloc(sizeof(char) * ret->response.header_size);
 	if(ret->response.header == NULL) {
@@ -259,8 +210,8 @@ void connection_destroy(connection *p) {
 
 	/* hit the big red button */
 	memset(p, 0, sizeof(connection));
-}	
-	
+}
+
 void url_decode(char *dest, const char *src) {
 	/*	assume that dest is at least as large as src.
 		if the guy on the other end can't do at least that. plzdie. */
@@ -278,7 +229,7 @@ void url_decode(char *dest, const char *src) {
 			ascii = strtoul(code, &end, 16);
 			// now put that char in dest.
 			*dest = (char)ascii;
-			// increase dest one 
+			// increase dest one
 			dest++;
 			// and increase p 2, since we read 2 chars for the hex code
 			p += 2;
@@ -339,7 +290,7 @@ void make_error_data(char *buf, http_data_out *out, http_status_code code, char 
 }
 
 const char *http_code_to_str(http_status_code x) {
-	// turn our status code into a string so that the browser knows what is going on	
+	// turn our status code into a string so that the browser knows what is going on
 	switch(x) {
 	case HTTP_OK:
 		return "HTTP/1.1 200 OK";
@@ -368,14 +319,14 @@ const char *http_code_to_str(http_status_code x) {
 	}
 }
 
-/* this function goes ahead and figures out a MIME 
+/* this function goes ahead and figures out a MIME
 type from the resource that the guy requested.
 maybe this should be changed so it checks against the actual file,
 not what the user requested. */
 
 const char *get_mime_type(char *resource) {
 	int i, len_mime, len = strlen(resource);
-	
+
 	/* go through our fat struct array looking for a mime type
 	until we hit the sentinel. */
 	for(i=0;mime_types[i].ext != 0;i++) {

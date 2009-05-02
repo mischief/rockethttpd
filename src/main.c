@@ -38,7 +38,7 @@ void usage(char *prog)
 
 int main(int argc, char **argv)
 {
-	printf("[+] %s, built on %s %s\n", VERSION, __DATE__, __TIME__);
+	printf("[+] %s built on %s %s\n", VERSTRING, __DATE__, __TIME__);
 
 /*	this #ifdef block is to set up windows-only socket related matter,
 	and registering WSACleanup() with atexit() so what we know it is

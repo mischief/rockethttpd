@@ -2,14 +2,19 @@
 #define HTTP_H
 
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "common_types.h"
+#include "networking.h"
+#include "defs.h"
 
-const int parse_http_request(	char *,		// this is a pointer to the data recieved from the client.
-				const size_t,	// the length of the data recieved from the client.
-				connection * // this is a pointer to the memory that will store our data.
-				);
+// this is a pointer to the data recieved from the client.
+// the length of the data recieved from the client.
+// this is a pointer to the memory that will store our data.
+const int parse_http_request(char *, const size_t, connection *);
 
-/*	this is a big guy. 
+/*	this is a big guy.
 	what this does is first urldecode the URL,
 	and then reads the requested file into a buffer.
 	at this point in time i do not know what will happen if
