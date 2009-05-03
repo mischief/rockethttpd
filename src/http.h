@@ -6,6 +6,7 @@
 #include "networking.h"
 #include "http_helper.h"
 #include "http_error.h"
+#include "dir.h"
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>

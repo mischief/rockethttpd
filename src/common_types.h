@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 
-#define KILOBYTE 1024 * 1
+#define KILOBYTE 1024
 
 typedef int sockfd;
 
@@ -38,16 +38,16 @@ typedef struct {
 	char *request_method;
 	char resource[FILENAME_MAX];
 	char http_ver[20];
-        char headers[1 * KILOBYTE];
+	char headers[1 * KILOBYTE];
 } http_data_in;
 
 /* structure to hold the response to the browser/client */
 
 typedef struct {
 	http_status_code status;
-        char *header;
+	char *header;
 	unsigned long header_size;
-        char *data;
+	char *data;
 	unsigned long content_size;
 	char mimetype[100];
 	FILE *file;
@@ -57,7 +57,7 @@ typedef struct {
 
 typedef struct {
 	/* the socket that the connection is on */
-        sockfd socket;
+	sockfd socket;
 	/* all the client data */
 	char clientip[NI_MAXHOST];
 	char clientport[NI_MAXSERV];
@@ -66,7 +66,6 @@ typedef struct {
 	/* server data */
 	char serverip[NI_MAXHOST];
 	char port[NI_MAXSERV];
-
 } connection_data;
 
 /* structure to hold the entire http request AND response. \o/ */

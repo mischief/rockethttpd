@@ -90,7 +90,7 @@ const int fulfill_request(connection *ret) {
 	if( strcmp( &ret->req.resource[strlen(ret->req.resource)-1], "/") == 0) {
 		/* we have a directory! */
 		getcwd(buf, 8 * KILOBYTE);
-		BARK; printf("directory was requested: \"%s\"\n", buf);
+		BARK("directory was requested: \"%s\"\n", buf);
 		memset(buf, 0, sizeof(buf));
 
 		/* oh, bother. no function to support directory lists now, 404 :D */
@@ -99,9 +99,12 @@ const int fulfill_request(connection *ret) {
 		DIR FUNCTIONALITY GOES HERE
 		======================== */
 
+		if( make_dir_list(ret) != 0 ) return -1;
+		/*
 		ret->response.status = HTTP_NOT_FOUND;
 		error_code_to_data( &(ret->response) );
 		return -1;
+		*/
 	} else {
 		/* we haz a file request. */
 		if( get_that_file(ret) != 0 ) return -1;
@@ -157,7 +160,7 @@ const int get_that_file(connection *ret) {
 	ret->response.data = (char*) malloc(sizeof(char) * ret->response.content_size);
 	if(ret->response.data == NULL) {
 		/* d'oh, OOM! */
-		BARK;
+		BARK("couldn't malloc for file");
 		ret->response.status = HTTP_INTERNAL_ERROR;
 		error_code_to_data( &(ret->response) );
 		return -1;
@@ -168,7 +171,7 @@ const int get_that_file(connection *ret) {
 	fclose(ret->response.file);
 	if(bytes != ret->response.content_size) {
 		/* read error. :( */
-		BARK;
+		BARK("couldn't read whole file");
 		ret->response.status = HTTP_INTERNAL_ERROR;
 		error_code_to_data( &(ret->response) );
 		   return -1;

@@ -18,15 +18,15 @@ static const char *dir_page =
 "<title>Index of %s</title>\n" /* directory we are indexing */
 "</head>\n"
 "<body>\n"
-"\%s" /* dir_entry listing goes here */
+"%s\n" /* dir_entry listing goes here */
 "</body></html>\n";
 
 static const char *dir_entry =
-"<div class='ico'><img src=\'data:image/png;base64,%s\' /></div>" /* base64 icon */
-"<div class='filename'><a href='%s'>%s</a></div>" /* file name, file name */
-"<div class='modified'>%s</div>" /* date last modified */
-"<div class='size'>%ul</div>" /* size of file, unsigned long */
-"<br />";
+"<div class='ico'><img src=\'data:image/png;base64,%s\' /></div>\n" /* base64 icon */
+"<div class='filename'><a href='%s'>%s</a></div>\n" /* file name, file name */
+"<div class='modified'>%s</div>\n" /* date last modified */
+"<div class='size'>%ul</div>\n" /* size of file, unsigned long */
+"<br />\n";
 
 static const char *default_icon = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABYlBMVEUgIGVZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMFsjsBujr9ykL9ykb92k716lbt7lbx+l7qCmryFnb6IoMCLosKMosKPpcSRp8aSqMaVq8iXrMmarsudsM2dsc2htM6jttGkttGnudOpu9SqvNWuvtevwNizw9rU5PrW5PrW5frW5fvX5fvY5frY5vvZ5vvZ5/va5/ra5/vb5/vc6Pvc6Pzc6fvc6fzd6fvd6fze6fve6vve6vzf6vvf6vzf6/zg6/vg6/zh6/zg7Pzh7Pvh7Pzi7Pvi7Pzi7fzj7fvj7fzk7fzj7vzj7v3k7vzl7vzl7v3l7/zl7/3m7/zm7/3n7/zn8Pzn8P3o8Pzo8P3p8P3o8f3p8f3q8f3r8f3q8vzr8v3r8/3s8/3t8/3t9P3t9P7u9P3u9P7v9P3u9f7v9f3v9f7w9f7w9v3x9v3x9/7y9/3y9/7z9/70+P7///9VgMh2qvBUAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWCxgAGCK9tcJOAAAA50lEQVQY02NgYGBQV1aQk5YQFRYUZIAAteLiooLc7DTBEqiIanFhXk5GarJgCVREpTA/Nz0lKQEoABFRysnJTE6KjxEEAZCAYlZaUmJsTGRwgJcHWEA+LSkhNjo8xN/XwwUsIJuUEBMRGuzn4+rqyA8SkImLigz39/Nydba35gMJSEWGB/t7e7g6WluZ84AEJMMCA7zdXR2sLUyMuEAC4kH+Hu5O9jZmJkYGHCABMW9PN0d7G1MTQz0dNpCAiIerva2libGhvq4WC0hA2NHOCqhdX09bU4MRJCAkIMDHy83JzsrMVFoKAB5KMY+XnxuDAAAAAElFTkSuQmCC";
 
@@ -35,8 +35,7 @@ static const char *folder_icon = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAA
 static const struct {
 	char *ext;
 	char *base64ico;
-	} icons[] = {
-
+} icons[] = {
 	/* text */
 	/* .html */
 	{"html","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABfVBMVEVlIAkVLEIVLEMjLD4nMTweNlYiOFkmOV8ePWQcPmUfPG4eQHw3QjEhQn1ISDclUIImUptAUlYlUaYqWIwuXIpeWDEuXK1XWFRcWlAvYLBDZHE5YpszY7M3bqk6brk9dKQ5csxCdrxNeJxNeKlBes5Oe6aDdkBFfdBKhL5sgXlVgMhZgcZPhsdYgsVQhsdYhL5dhMRehMRJjtRhiMNiicNRjt9lisJYj9Rni8FpjMFvkKtsjsBujr9ykL9ykb9vl7h2k716lbt7lbx8m5quljd+l7pjoNqpmEqCmryFnb64mlOIoMCJorWLosKMosJ2qd2Aq9qRp8aerpWwsWiXrMmQrtadsc2jttHVt26pu9Taum+uvtfcvG+vwNjTwoazw9q4ybjk0IHy0nH30Yby15Xu3qvm3cvn4cbS4vrU4/rW5PrX5fvZ5vvw5sH+4L/b5/vc6Pve6fvg6vzh7Pzj7fzl7vz/8OXw9f7y9/7z9/3z9/7/9er0+P7///8XKUR12w5YAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWBhAMAgdyovnoAAAA6ElEQVQY02NgYGCIjwwPCwn09XR1ZYCA2BoIcK2FikRLc0pVVVZUuNZCRGTVkoJ0pDlDa4ECIBHZhLzcuGBNAcZyVxBgYOBPr05N9FIS4yoNDS0pdmXg10grS45RVpHhZSotKS5yZWAPsEpx9jFVl+RmLAotKnRkYNPzt4/SV5UTYmUsLioscGBgEDZ3M4pwF+dgLgoNLci3ZWCok1dUcFETZWEEyufnWAPdwcghIsjHAzQhNDQn2wLkMj9GRkYJsHx2lglIwLu0JBQCsjINQQKeJcVQ+cwMbZCAh5OTg52NpZmxga6WFgCqfj8jKC82iwAAAABJRU5ErkJggg=="},
@@ -84,3 +83,148 @@ static const struct {
 	{0,0}
 };
 
+const int make_dir_list(connection *ret) {
+	char buf[1 * KILOBYTE] = {0};
+	struct stat stattmp;
+	struct dirent **filelist;
+	int filecount = 0;
+	char dir[1 * KILOBYTE] = {0};
+	char *entries = 0;
+
+	/* FIX THIS LATER */
+	char entrybuf[5 * KILOBYTE] = {0};
+	char filenamebuf[256] = {0};
+	char iconbuf[5 * KILOBYTE] = {0};
+	char timestampbuf[256] = {0};
+	unsigned long filesize = 0;
+	struct tm timetmp;
+	const char *timestr = "%d-%b-%Y %H:%M";
+
+	/* so, the basic idea is as follows:
+	 * 1. scan the directory
+	 * 2. stat the file for infos
+	 * 3. grab the filename
+	 * 4. get an icon based on filename/type
+	 * 5. get the size
+	 * 6. get the last modified timestamp
+	 * 7. pop it in dir_entry
+	 * 8. put those in dir_page
+	 * 9. return all that shit */
+
+	/* 1. */
+	BARK("decoding URL \"%s\"\n", ret->req.resource+1);
+	strcpy(dir, "./");
+	url_decode(buf, ret->req.resource+1);
+	strcat(dir, buf);
+	BARK("decoded to \"%s\"\n", dir);
+
+	filecount = scandir(dir, &filelist, 0, alphasort);
+	if(filecount >= 0) {
+		BARK("scandir got %d results\n", filecount);
+		/* something was found */
+		int cnt;
+		for(cnt = 0; cnt < filecount; ++cnt) {
+			/* first clear all buffers */
+			memset(entrybuf, 0, sizeof(entrybuf));
+			memset(filenamebuf, 0, sizeof(filenamebuf));
+			memset(iconbuf, 0, sizeof(iconbuf));
+			memset(timestampbuf, 0, sizeof(timestampbuf));
+			/* 2. stat da file */
+			BARK("going to stat %s\n", filelist[cnt]->d_name);
+			stat(filelist[cnt]->d_name, &stattmp);
+
+			/* 3. what's yo name, bitch */
+			strncpy(filenamebuf, filelist[cnt]->d_name, 255);
+
+			/* 4. gimme an icon. */
+			if( S_ISREG(stattmp.st_mode) ) {
+				strcpy(iconbuf, icon_from_fname(filenamebuf) );
+			} else if(S_ISDIR(stattmp.st_mode)) {
+				strcpy(iconbuf, folder_icon);
+			} else {
+				/* isn't a regular file or folder... wtf is it? */
+				strcpy(iconbuf, default_icon);
+			}
+
+			BARK("fetching the size and time\n");
+
+			/* 5. how big are you. */
+			filesize = stattmp.st_size;
+
+			/* 6. gimme a timestamp */
+			gmtime_r(&stattmp.st_mtime, &timetmp);
+			strftime(timestampbuf, 256, timestr, &timetmp);
+
+			BARK("putting data into buffer\n");
+			/* 7. okay, now put all this shit in a fat buffer
+			 * using the html template
+			 * order = icon, filename, time modified, size */
+			sprintf(entrybuf, dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, filesize);
+
+			/* find the length of what we want to add */
+			int addlen = strlen(entrybuf);
+			if(entries == NULL) {
+				/* if == null, then we have to allocate some memory to begin with */
+				entries = (char *) malloc(addlen * sizeof(char));
+			} else {
+				/* otherwise, allocate some more memory */
+				int curlen = strlen(entries);
+				entries = (char *) realloc(entries, (curlen + addlen) * sizeof(char));
+			}
+			strcat(entries, entrybuf);
+
+			free(filelist[cnt]);
+
+			BARK("finished %d items in directory \"%s\"\n", cnt, dir);
+
+		}
+
+		BARK("freeing linked list\n");
+
+		free(filelist);
+
+		/* now add entries to the template */
+		int len = strlen(dir_page) + strlen(dir) + strlen(entries);
+		BARK("total length: %d\n", len);
+		ret->response.data = (char *) malloc(len * sizeof(char));
+
+		BARK("malloc'd %lu bytes\n", len * sizeof(char));
+
+		if(ret->response.data == NULL) {
+			/* d'oh, OOM! */
+			BARK("malloc failed\n");
+			ret->response.status = HTTP_INTERNAL_ERROR;
+			error_code_to_data( &(ret->response) );
+			return -1;
+		}
+		BARK("about to sprintf\n");
+		ret->response.content_size = sprintf(ret->response.data, dir_page, dir, entries);
+		BARK("sprintf wrote %lu chars\n", ret->response.content_size);
+
+		free(entries);
+
+		return 0;
+
+	} else {
+		fprintf(stderr, "[-] in file \"%s\", line %d: scandir: %s\n", __FILE__, __LINE__, strerror(errno));
+		return -1;
+	}
+
+	/* error if we get here? */
+	return -1;
+}
+
+const char *icon_from_fname(const char *filename) {
+	int i, len_ico, len = strlen(filename);
+
+	/* search for the file extension in the struct */
+	for(i=0;icons[i].ext != 0;i++) {
+		len_ico = strlen(icons[i].ext);
+		if( strncmp(&filename[len-len_ico], icons[i].ext, len_ico) == 0) {
+			return icons[i].base64ico;
+		}
+	}
+
+	/* no icon. send a blank one. */
+	return default_icon;
+}

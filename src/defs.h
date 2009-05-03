@@ -2,7 +2,7 @@
 #define DEFS_H
 
 #define PROGRAM	"Rocket HTTPD"
-#define VERSION	"v0.1.3"
+#define VERSION	"v0.1.4"
 #define AUTHOR	"mischief"
 #define EMAIL	"<this.is.srs.bsns@gmail.com>"
 #define SOURCE	"http://code.google.com/p/rockethttpd/"
@@ -12,7 +12,9 @@
 #define DEBUG 1
 
 /* used for debugging stuff */
-#define BARK if(DEBUG) printf("[-] file \"%s\", line %d: ", __FILE__, __LINE__)
+//#define BARK if(DEBUG) printf("[-] file \"%s\", line %d: ", __FILE__, __LINE__)
+
+#define BARK(fmt, ...) if(DEBUG) printf("[-] file \"%s\", line %d: " fmt, __FILE__, __LINE__, ##__VA_ARGS__)
 
 // number of connections pending in the queue
 #define BACKLOG 50
