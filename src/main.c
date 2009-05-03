@@ -83,6 +83,7 @@ int main(int argc, char **argv)
 
 	int rv = 0;; // used for getaddrinfo return value
 
+	memset(&hints, 0, sizeof(hints)); //mh, not sure :) bzero, not memset? uh, probably
 	// set up hints struct for getaddrinfo()
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
@@ -161,7 +162,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	printf("[+] %s: waiting for connections on %s:%s\n", VERSION, servip, port);
+	printf("[+] %s: waiting for connections on %s:%s\n", PROGRAM, servip, port);
 
 	/* main server loop */
 	while(1)

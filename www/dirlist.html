@@ -5,10 +5,11 @@
 <head>
   <style type="text/css">
 /*<![CDATA[*/
-  div.wrapper { width:500px; } div.ico {
-  width:20px; float:left; position:absolute; } div.filename { width:200px; float:left; text-align:left; margin-left:25px;
-  vertical-align:left; } div.modified { width:150px; float:left; text-align:left; } div.size { width:50px;
-  float:right; text-align:left; vertical-align:left; } hr { clear:both; display:block; /* visibility:hidden; */ }
+  div.wrapper { width:500px; }
+  div.ico { width:16px; height:16px; float:left; position:absolute; }
+  div.filename { width:200px; float:left; text-align:left; margin-left:25px; vertical-align:left; } div.modified { width:150px; float:left; text-align:left; }
+  div.size { width:50px; float:right; text-align:left; vertical-align:left; } hr { clear:both; display:block; /* visibility:hidden; */ }
+  .file { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABYlBMVEUgIGVZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMFsjsBujr9ykL9ykb92k716lbt7lbx+l7qCmryFnb6IoMCLosKMosKPpcSRp8aSqMaVq8iXrMmarsudsM2dsc2htM6jttGkttGnudOpu9SqvNWuvtevwNizw9rU5PrW5PrW5frW5fvX5fvY5frY5vvZ5vvZ5/va5/ra5/vb5/vc6Pvc6Pzc6fvc6fzd6fvd6fze6fve6vve6vzf6vvf6vzf6/zg6/vg6/zh6/zg7Pzh7Pvh7Pzi7Pvi7Pzi7fzj7fvj7fzk7fzj7vzj7v3k7vzl7vzl7v3l7/zl7/3m7/zm7/3n7/zn8Pzn8P3o8Pzo8P3p8P3o8f3p8f3q8f3r8f3q8vzr8v3r8/3s8/3t8/3t9P3t9P7u9P3u9P7v9P3u9f7v9f3v9f7w9f7w9v3x9v3x9/7y9/3y9/7z9/70+P7///9VgMh2qvBUAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWCxgAGCK9tcJOAAAA50lEQVQY02NgYGBQV1aQk5YQFRYUZIAAteLiooLc7DTBEqiIanFhXk5GarJgCVREpTA/Nz0lKQEoABFRysnJTE6KjxEEAZCAYlZaUmJsTGRwgJcHWEA+LSkhNjo8xN/XwwUsIJuUEBMRGuzn4+rqyA8SkImLigz39/Nydba35gMJSEWGB/t7e7g6WluZ84AEJMMCA7zdXR2sLUyMuEAC4kH+Hu5O9jZmJkYGHCABMW9PN0d7G1MTQz0dNpCAiIerva2libGhvq4WC0hA2NHOCqhdX09bU4MRJCAkIMDHy83JzsrMVFoKAB5KMY+XnxuDAAAAAElFTkSuQmCC); }
   /*]]>*/
   </style>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -37,7 +38,7 @@
     <!-- do one of
 these for each file -->
 
-    <div class="ico"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABYlBMVEUgIGVZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMFsjsBujr9ykL9ykb92k716lbt7lbx+l7qCmryFnb6IoMCLosKMosKPpcSRp8aSqMaVq8iXrMmarsudsM2dsc2htM6jttGkttGnudOpu9SqvNWuvtevwNizw9rU5PrW5PrW5frW5fvX5fvY5frY5vvZ5vvZ5/va5/ra5/vb5/vc6Pvc6Pzc6fvc6fzd6fvd6fze6fve6vve6vzf6vvf6vzf6/zg6/vg6/zh6/zg7Pzh7Pvh7Pzi7Pvi7Pzi7fzj7fvj7fzk7fzj7vzj7v3k7vzl7vzl7v3l7/zl7/3m7/zm7/3n7/zn8Pzn8P3o8Pzo8P3p8P3o8f3p8f3q8f3r8f3q8vzr8v3r8/3s8/3t8/3t9P3t9P7u9P3u9P7v9P3u9f7v9f3v9f7w9f7w9v3x9v3x9/7y9/3y9/7z9/70+P7///9VgMh2qvBUAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWCxgAGCK9tcJOAAAA50lEQVQY02NgYGBQV1aQk5YQFRYUZIAAteLiooLc7DTBEqiIanFhXk5GarJgCVREpTA/Nz0lKQEoABFRysnJTE6KjxEEAZCAYlZaUmJsTGRwgJcHWEA+LSkhNjo8xN/XwwUsIJuUEBMRGuzn4+rqyA8SkImLigz39/Nydba35gMJSEWGB/t7e7g6WluZ84AEJMMCA7zdXR2sLUyMuEAC4kH+Hu5O9jZmJkYGHCABMW9PN0d7G1MTQz0dNpCAiIerva2libGhvq4WC0hA2NHOCqhdX09bU4MRJCAkIMDHy83JzsrMVFoKAB5KMY+XnxuDAAAAAElFTkSuQmCC" /></div>
+    <div class="ico file"></div>
 
     <div class="filename">
       <a href="index.html">index.html</a>
