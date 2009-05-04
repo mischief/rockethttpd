@@ -57,7 +57,6 @@ const http_request_type get_request_type(const char *str) {
 	}
 
 	/* if the for loop did not find it, then it is invalid. :( */
-	assert(methods[i].method == NULL);
 	return INVALID;
 }
 

@@ -24,4 +24,8 @@ const int make_dir_list(connection *ret);
 
 const char *icon_from_fname(const char *filename);
 
+int noparent(const struct dirent *entry);
+
+int yesparent(const struct dirent *entry);
+
 #endif

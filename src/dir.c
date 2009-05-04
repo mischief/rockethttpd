@@ -14,6 +14,8 @@ static const char *dir_page =
 "div.size { width:30px; float:right; text-align:left; margin-right:20px; }\n"
 "hr { clear:both; display:block; /* visibility:hidden; */ }\n"
 "/* icons */"
+/* arrow */
+".arrow { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAVElEQVR42qWT0QoAIAgD9/8fbYEQSGLONrC3O1IRZraUgj/AV0kC6QdSC9IMInhCC6pQgipUC12eAialgImzbhn03K5xAidB3G8HJsENj64xwtNz3iu3wU8Fir11AAAAAElFTkSuQmCC); }\n"
 /* texts */
 ".file { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABYlBMVEUgIGVZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMFsjsBujr9ykL9ykb92k716lbt7lbx+l7qCmryFnb6IoMCLosKMosKPpcSRp8aSqMaVq8iXrMmarsudsM2dsc2htM6jttGkttGnudOpu9SqvNWuvtevwNizw9rU5PrW5PrW5frW5fvX5fvY5frY5vvZ5vvZ5/va5/ra5/vb5/vc6Pvc6Pzc6fvc6fzd6fvd6fze6fve6vve6vzf6vvf6vzf6/zg6/vg6/zh6/zg7Pzh7Pvh7Pzi7Pvi7Pzi7fzj7fvj7fzk7fzj7vzj7v3k7vzl7vzl7v3l7/zl7/3m7/zm7/3n7/zn8Pzn8P3o8Pzo8P3p8P3o8f3p8f3q8f3r8f3q8vzr8v3r8/3s8/3t8/3t9P3t9P7u9P3u9P7v9P3u9f7v9f3v9f7w9f7w9v3x9v3x9/7y9/3y9/7z9/70+P7///9VgMh2qvBUAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWCxgAGCK9tcJOAAAA50lEQVQY02NgYGBQV1aQk5YQFRYUZIAAteLiooLc7DTBEqiIanFhXk5GarJgCVREpTA/Nz0lKQEoABFRysnJTE6KjxEEAZCAYlZaUmJsTGRwgJcHWEA+LSkhNjo8xN/XwwUsIJuUEBMRGuzn4+rqyA8SkImLigz39/Nydba35gMJSEWGB/t7e7g6WluZ84AEJMMCA7zdXR2sLUyMuEAC4kH+Hu5O9jZmJkYGHCABMW9PN0d7G1MTQz0dNpCAiIerva2libGhvq4WC0hA2NHOCqhdX09bU4MRJCAkIMDHy83JzsrMVFoKAB5KMY+XnxuDAAAAAElFTkSuQmCC); }\n"
 ".folder { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6AAAdTAAAOpgAAA6lwAAF2+XqZnUAAADiUlEQVR4nGLQMzJl0NIzYNDXVucw01ZWNzAwkNQxNAGKGQLFNDmsDTQNoxyNslpi7Nb0Rps+NzPSdzYyMWUwBuL///8zAAQQQ7S9VlFrrNOKte35Ny6t6PpbG2ZzLtxWL7cx2nHh2pakO1eXlvx+f7D5//9bvf/PT/L4r6upkairrclgbmwoAzIAIAAAQQC+/wClc0/i//bW///1wf//9sD/89av/+/HkP//25f//9iC//7Sc//1vVX/8rBF/9OGMP99UjnJrYBh1HJLLd3///8AAgBBAL7/AIJdRLj/56f/+ddv//jSb//813f/+Mlj//G2Tf/qqUn/455O/+Sqcf/nuZD/8NS2///50//87LX/Z0guw////wACiCHD06z3x9VZ/39dyPn/cV/c/yeLA/4/XVME1vD+0rb/P95e+P/31zmg2qP///9bC6Tn/X9xOPW/h7n2TJABAAHEEGJvnP56X+v/32fS/z+Z7/n/073z///+vg6UOw3Em/7//7Pg///vU/7//9j7//+bTiDd8f/8HK//prrauSADAAKIwdFU3+XuioL/v44k/n88P+z/r09X/v//Oxei6dPE///fdv///6Ll///Htf//3y////9B/v81Veb/9HX07UAGAAQQgxkwWE9PS/r+c1f4/8dLMv7/+XISaEvP//+vO/7/f9bw///Div//7xT+/3896///Kyn//58L+98dq/1RU89EEmQAQAAxGOpo8W1ujnjxdaXL/6drK////7z9//9HZf//3yv9//8m0JVX0/7/Px8H9FH4//8nA///2+X4P9tN7ZS2gRkLyACAAGLQ0dVnmV3gd/LTLLP/z7cBnft6NlBT8v//FxOAmiL//z8eCAw/LyB2+///kP3/Z1O1/ntbaM/XN4IkJIAAYtDSN2ZoirRc9WGWw//Xh4CabwCdeyLg//9jvkBN7v//H7D//3Od6f8bvZr/5yar/IuyU79gbGziYGJiAjYAIIAYtA1NGbI9tLueTvP6//n8/P//zwT9/3/Q/v+fTeb/707Q+r8oXeVfirPaZWtD3W5tPRNLXSMzZpBmmAEAAcQAygth9npZdztc/n873vv/Zp/G/2VZqv9z3NRu2xnr9unoGTvqGJqxGQLTPkwjsgEAAcRgZGzCYGNuZFnppfYy1UX7lI2hTouunpEzMJB4DI0xNaEbABBAYIISDBBAFBsAEGAAg6Rt6VBtWbkAAAAASUVORK5CYII=); }\n"
@@ -155,7 +157,13 @@ const int make_dir_list(connection *ret) {
 	/* put the decoded url onto the end of ./ */
 	strcat(dir, buf);
 
-	filecount = scandir(dir, &filelist, NULL, alphasort);
+	/* this if statement is to filter out ".." if we are in / */
+	if( strncmp(dir, "./", 3) ) {
+		filecount = scandir(dir, &filelist, yesparent, alphasort);
+	} else {
+		filecount = scandir(dir, &filelist, noparent, alphasort);
+	}
+
 	if(filecount >= 0) {
 		/* something was found */
 		int cnt;
@@ -196,17 +204,27 @@ const int make_dir_list(connection *ret) {
 			strftime(timestampbuf, 256, timestr, &timetmp);
 
 			/* 7. put in buffer, order = icon, filename, time modified, size */
-			entrybuflen = 20 + strlen(dir_entry) + strlen(iconbuf) + strlen(filenamebuf) + strlen(timestampbuf) + strlen(sizebuf);
-			entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
-			int len = sprintf(entries[cnt], dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, sizebuf);
+			/* find out the total size of our string, plus some extra room */
+			//entrybuflen = 50 + strlen(dir_entry) + strlen(iconbuf) + strlen(filenamebuf) + strlen(timestampbuf) + strlen(sizebuf);
+			//entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
+			/* put all the directory data into the div tags */
+			int len;
+			if( strcmp(filenamebuf, "../") == 0) {
+				entrybuflen = 10 + strlen(dir_entry) + strlen("arrow") + strlen(filenamebuf) + strlen("Parent Directory") + strlen(sizebuf);
+				entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
+				len = sprintf(entries[cnt], dir_entry, "arrow", filenamebuf, "Parent Directory", "", sizebuf);
+			} else {
+				entrybuflen = 10 + strlen(dir_entry) + strlen(iconbuf) + (strlen(filenamebuf)*2) + strlen(timestampbuf) + strlen(sizebuf);
+				entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
+				len = sprintf(entries[cnt], dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, sizebuf);
+			}
 			entrieslen += len + 1;
 
+			/* free the linked list and file name buffer */
 			free(filelist[cnt]);
 			free(filenamebuf);
 
 		}
-
-		//BARK("concatenating %d strings totalling %d chars\n", cnt, entrieslen);
 
 		char *entriestotal = (char *) malloc(entrieslen * sizeof(char));
 		/* danke BhaaL */
@@ -262,4 +280,15 @@ const char *icon_from_fname(const char *filename) {
 
 	/* no icon. send a blank one. */
 	return "file";
+}
+
+int noparent(const struct dirent *entry) {
+	if( strncmp(entry->d_name, "..", 3) == 0) return 0;
+	if( strncmp(entry->d_name, ".", 2) == 0) return 0;
+	return 1;
+}
+
+int yesparent(const struct dirent *entry) {
+	if( strncmp(entry->d_name, ".", 3) == 0) return 0;
+	return 1;
 }

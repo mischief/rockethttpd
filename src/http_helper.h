@@ -2,7 +2,6 @@
 #define HTTP_HELPER_H
 
 #include "defs.h"
-#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 

@@ -29,12 +29,18 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 			if( (subtok = strtok_r(tok, " ", &substate)) != NULL ) {
 				/* duplicate string to data structure */
 				ret->req.request_method = strdup(subtok);
+				if(ret->req.request_method == NULL) {
+					ret->response.status = HTTP_INTERNAL_ERROR;
+					error_code_to_data( &(ret->response) );
+					return -1;
+				}
 				/* okay, now figure out what method that was. */
 				ret->req.request_type = get_request_type(subtok);
 
 				/* okay, so if it isn't one of those, it's invalid. good day sir.*/
 				if(ret->req.request_type == INVALID) {
 					ret->response.status = HTTP_BAD_REQUEST;
+					error_code_to_data( &(ret->response) );
 					return -1;
 				}
 			}
@@ -45,8 +51,8 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 			if( (subtok = strtok_r(NULL, " ", &substate)) != NULL ) { // next the file
 				if(strlen(subtok) > FILENAME_MAX) { // this is the size of the resource requested.
 					/* alright, if you're submitting shit this big, gtfokthx. */
-					ret->req.request_type = INVALID;
 					ret->response.status = HTTP_URI_TOO_LONG;
+					error_code_to_data( &(ret->response) );
 					return -1;
 				} else {
 					/* copy the resource string to the struct */
@@ -58,9 +64,9 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 			if( (subtok = strtok_r(NULL, " ", &substate)) != NULL ) {
 				if(strlen(subtok) > 20) {
 					/* okay, now the idiot is sending a HTTP version that is too big for our buffer. */
-                                        ret->req.request_type = INVALID;
 					ret->response.status = HTTP_VERSION_UNSUPPORTED;
-                                        return -1;
+					error_code_to_data( &(ret->response) );
+					return -1;
 				} else {
 					strncpy(ret->req.http_ver, subtok, 20);
 				}
@@ -110,6 +116,11 @@ const int fulfill_request(connection *ret) {
 	ret->response.header_size = strlen(buf);
 	/* copy the buffer to the header output */
 	ret->response.header = strdup(buf);
+	if(ret->response.header == NULL) {
+		ret->response.status = HTTP_INTERNAL_ERROR;
+		error_code_to_data( &(ret->response) );
+		return -1;
+	}
 
 	/* done, now all the data should be sent off. :) */
 	return 0;
