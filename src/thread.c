@@ -50,7 +50,7 @@ void *dispatch_request(void *arg)
 			fprintf(stderr, "[-] in file \"%s\", line %d: fulfill_request: something bad happened: %d\n", __FILE__, __LINE__, client_req.response.status);
 			*/
 		}
-
+		print_con_dat(c.conn); printf("sending response '%s'\n", http_code_to_str(c.response.status) );
 		/* send the header first*/
 		nbytes = c.response.header_size;
 		//printf("[+] %s <-> %s: sending %d bytes of header data\n", c.conn->serverip, c.conn->clientip, nbytes);

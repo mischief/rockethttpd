@@ -68,6 +68,9 @@ int main(int argc, char **argv)
 	char servip[INET6_ADDRSTRLEN];
 	char servport[20];
 
+	memset(servip, 0, INET6_ADDRSTRLEN);
+	memset(servport, 0, sizeof(servport));
+
 	if(chdir(argv[2]) == -1) {
 		fprintf(stderr, "[-] in file \"%s\", line %d: chdir( \"%s\" ): %s\n", __FILE__, __LINE__, argv[2], strerror(errno));
 		exit(5);
@@ -79,17 +82,16 @@ int main(int argc, char **argv)
 
 	struct addrinfo hints, *servinfo;
 
-	int yes=1; // for the call to setsockopt(), to turn SO_REUSEADDR on.
+	/* SO_REUSEADDR on. */
+	int yes=1;
+	/* getaddrinfo return value */
+	int rv = 0;
 
-	int rv = 0;; // used for getaddrinfo return value
-
-	memset(&hints, 0, sizeof(hints)); //mh, not sure :) bzero, not memset? uh, probably
+	memset(&hints, 0, sizeof(hints));
 	// set up hints struct for getaddrinfo()
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
-
-	// collect our information about what to bind on etc
 
 	rv = getaddrinfo(NULL, port, &hints, &servinfo);
 	if (rv != 0) {
@@ -97,9 +99,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	// completely stolen from beej, loop through the results and bind on the first possible address
-
-	struct addrinfo *addr = {0}; // temporary, used for this loop only
+	struct addrinfo *addr;
 	for(addr = servinfo; addr != NULL; addr = addr->ai_next)
 	{
 		// fetch ourselves a socket file descriptor.
@@ -130,8 +130,8 @@ int main(int argc, char **argv)
 	}
 
 	/* figure out who we are */
-
-	if ( (rv = getnameinfo(addr->ai_addr, addr->ai_addrlen, servip, sizeof(servip), servport, sizeof(servport), 0)) != 0) {
+	rv = getnameinfo(addr->ai_addr, addr->ai_addrlen, servip, sizeof(servip), servport, sizeof(servport), NI_NUMERICHOST | NI_NUMERICSERV);
+	if (rv != 0) {
 		fprintf(stderr, "[-] in file \"%s\", line %d: getnameinfo: %s\n", __FILE__, __LINE__, gai_strerror(rv));
 		return EXIT_FAILURE;
 	}
@@ -191,8 +191,9 @@ int main(int argc, char **argv)
 		} else {
 			/* do the real bsns */
 			if(pthread_create(&client_thr, &attr, dispatch_request, (void *) p) != 0)
+			/* couldn't create a thread :( */
 			{
-				/* couldn't create a thread :( */
+
 				free(p);
 				fprintf(stderr, "[-] in file \"%s\", line %d: pthread_create: %s\n", __FILE__, __LINE__, strerror(errno));
 			}

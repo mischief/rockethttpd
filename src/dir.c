@@ -6,20 +6,21 @@ static const char *dir_page =
 "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
 "<head>\n"
 "<style type='text/css'>\n"
-"div.wrapper { width:500px; }\n"
+"/*<![CDATA[*/\n"
+"div.wrapper { width:480px; clear:left; }\n"
 "div.ico { width:16px; height:16px; float:left; position:absolute; }\n"
-"div.filename { width:200px; float:left; text-align:left; margin-left:25px; vertical-align:left; }\n"
+"div.filename { width:250px; float:left; text-align:left; margin-left:25px; }\n"
 "div.modified { width:150px; float:left; text-align:left; }\n"
-"div.size { width:50px; float:right; text-align:left; vertical-align:left; }\n"
+"div.size { width:30px; float:right; text-align:left; margin-right:20px; }\n"
 "hr { clear:both; display:block; /* visibility:hidden; */ }\n"
 "/* icons */"
 /* texts */
 ".file { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABYlBMVEUgIGVZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMFsjsBujr9ykL9ykb92k716lbt7lbx+l7qCmryFnb6IoMCLosKMosKPpcSRp8aSqMaVq8iXrMmarsudsM2dsc2htM6jttGkttGnudOpu9SqvNWuvtevwNizw9rU5PrW5PrW5frW5fvX5fvY5frY5vvZ5vvZ5/va5/ra5/vb5/vc6Pvc6Pzc6fvc6fzd6fvd6fze6fve6vve6vzf6vvf6vzf6/zg6/vg6/zh6/zg7Pzh7Pvh7Pzi7Pvi7Pzi7fzj7fvj7fzk7fzj7vzj7v3k7vzl7vzl7v3l7/zl7/3m7/zm7/3n7/zn8Pzn8P3o8Pzo8P3p8P3o8f3p8f3q8f3r8f3q8vzr8v3r8/3s8/3t8/3t9P3t9P7u9P3u9P7v9P3u9f7v9f3v9f7w9f7w9v3x9v3x9/7y9/3y9/7z9/70+P7///9VgMh2qvBUAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWCxgAGCK9tcJOAAAA50lEQVQY02NgYGBQV1aQk5YQFRYUZIAAteLiooLc7DTBEqiIanFhXk5GarJgCVREpTA/Nz0lKQEoABFRysnJTE6KjxEEAZCAYlZaUmJsTGRwgJcHWEA+LSkhNjo8xN/XwwUsIJuUEBMRGuzn4+rqyA8SkImLigz39/Nydba35gMJSEWGB/t7e7g6WluZ84AEJMMCA7zdXR2sLUyMuEAC4kH+Hu5O9jZmJkYGHCABMW9PN0d7G1MTQz0dNpCAiIerva2libGhvq4WC0hA2NHOCqhdX09bU4MRJCAkIMDHy83JzsrMVFoKAB5KMY+XnxuDAAAAAElFTkSuQmCC); }\n"
-".folder { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6AAAdTAAAOpgAAA6lwAAF2+XqZnUAAADiUlEQVR4nGLQMzJl0NIzYNDXVucw01ZWNzAwkNQxNAGKGQLFNDmsDTQNoxyNslpi7Nb0Rps+NzPSdzYyMWUwBuL///8zAAQQQ7S9VlFrrNOKte35Ny6t6PpbG2ZzLtxWL7cx2nHh2pakO1eXlvx+f7D5//9bvf/PT/L4r6upkairrclgbmwoAzIAIAAAQQC+/wClc0/i//bW///1wf//9sD/89av/+/HkP//25f//9iC//7Sc//1vVX/8rBF/9OGMP99UjnJrYBh1HJLLd3///8AAgBBAL7/AIJdRLj/56f/+ddv//jSb//813f/+Mlj//G2Tf/qqUn/455O/+Sqcf/nuZD/8NS2///50//87LX/Z0guw////wACiCHD06z3x9VZ/39dyPn/cV/c/yeLA/4/XVME1vD+0rb/P95e+P/31zmg2qP///9bC6Tn/X9xOPW/h7n2TJABAAHEEGJvnP56X+v/32fS/z+Z7/n/073z///+vg6UOw3Em/7//7Pg///vU/7//9j7//+bTiDd8f/8HK//prrauSADAAKIwdFU3+XuioL/v44k/n88P+z/r09X/v//Oxei6dPE///fdv///6Ll///Htf//3y////9B/v81Veb/9HX07UAGAAQQgxkwWE9PS/r+c1f4/8dLMv7/+XISaEvP//+vO/7/f9bw///Div//7xT+/3896///Kyn//58L+98dq/1RU89EEmQAQAAxGOpo8W1ujnjxdaXL/6drK////7z9//9HZf//3yv9//8m0JVX0/7/Px8H9FH4//8nA///2+X4P9tN7ZS2gRkLyACAAGLQ0dVnmV3gd/LTLLP/z7cBnft6NlBT8v//FxOAmiL//z8eCAw/LyB2+///kP3/Z1O1/ntbaM/XN4IkJIAAYtDSN2ZoirRc9WGWw//Xh4CabwCdeyLg//9jvkBN7v//H7D//3Od6f8bvZr/5yar/IuyU79gbGziYGJiAjYAIIAYtA1NGbI9tLueTvP6//n8/P//zwT9/3/Q/v+fTeb/707Q+r8oXeVfirPaZWtD3W5tPRNLXSMzZpBmmAEAAcQAygth9npZdztc/n873vv/Zp/G/2VZqv9z3NRu2xnr9unoGTvqGJqxGQLTPkwjsgEAAcRgZGzCYGNuZFnppfYy1UX7lI2hTouunpEzMJB4DI0xNaEbABBAYIISDBBAFBsAEGAAg6Rt6VBtWbkAAAAASUVORK5CYII=);}\n"
-".html { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABfVBMVEVlIAkVLEIVLEMjLD4nMTweNlYiOFkmOV8ePWQcPmUfPG4eQHw3QjEhQn1ISDclUIImUptAUlYlUaYqWIwuXIpeWDEuXK1XWFRcWlAvYLBDZHE5YpszY7M3bqk6brk9dKQ5csxCdrxNeJxNeKlBes5Oe6aDdkBFfdBKhL5sgXlVgMhZgcZPhsdYgsVQhsdYhL5dhMRehMRJjtRhiMNiicNRjt9lisJYj9Rni8FpjMFvkKtsjsBujr9ykL9ykb9vl7h2k716lbt7lbx8m5quljd+l7pjoNqpmEqCmryFnb64mlOIoMCJorWLosKMosJ2qd2Aq9qRp8aerpWwsWiXrMmQrtadsc2jttHVt26pu9Taum+uvtfcvG+vwNjTwoazw9q4ybjk0IHy0nH30Yby15Xu3qvm3cvn4cbS4vrU4/rW5PrX5fvZ5vvw5sH+4L/b5/vc6Pve6fvg6vzh7Pzj7fzl7vz/8OXw9f7y9/7z9/3z9/7/9er0+P7///8XKUR12w5YAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWBhAMAgdyovnoAAAA6ElEQVQY02NgYGCIjwwPCwn09XR1ZYCA2BoIcK2FikRLc0pVVVZUuNZCRGTVkoJ0pDlDa4ECIBHZhLzcuGBNAcZyVxBgYOBPr05N9FIS4yoNDS0pdmXg10grS45RVpHhZSotKS5yZWAPsEpx9jFVl+RmLAotKnRkYNPzt4/SV5UTYmUsLioscGBgEDZ3M4pwF+dgLgoNLci3ZWCok1dUcFETZWEEyufnWAPdwcghIsjHAzQhNDQn2wLkMj9GRkYJsHx2lglIwLu0JBQCsjINQQKeJcVQ+cwMbZCAh5OTg52NpZmxga6WFgCqfj8jKC82iwAAAABJRU5ErkJggg==);}\n"
-".htm { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABfVBMVEVlIAkVLEIVLEMjLD4nMTweNlYiOFkmOV8ePWQcPmUfPG4eQHw3QjEhQn1ISDclUIImUptAUlYlUaYqWIwuXIpeWDEuXK1XWFRcWlAvYLBDZHE5YpszY7M3bqk6brk9dKQ5csxCdrxNeJxNeKlBes5Oe6aDdkBFfdBKhL5sgXlVgMhZgcZPhsdYgsVQhsdYhL5dhMRehMRJjtRhiMNiicNRjt9lisJYj9Rni8FpjMFvkKtsjsBujr9ykL9ykb9vl7h2k716lbt7lbx8m5quljd+l7pjoNqpmEqCmryFnb64mlOIoMCJorWLosKMosJ2qd2Aq9qRp8aerpWwsWiXrMmQrtadsc2jttHVt26pu9Taum+uvtfcvG+vwNjTwoazw9q4ybjk0IHy0nH30Yby15Xu3qvm3cvn4cbS4vrU4/rW5PrX5fvZ5vvw5sH+4L/b5/vc6Pve6fvg6vzh7Pzj7fzl7vz/8OXw9f7y9/7z9/3z9/7/9er0+P7///8XKUR12w5YAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWBhAMAhtmo6WnAAAA6ElEQVQY02NgYGCIjwwPCwn09XR1ZYCA2BoIcK2FikRLc0pVVVZUuNZCRGTVkoJ0pDlDa4ECIBHZhLzcuGBNAcZyVxBgYOBPr05N9FIS4yoNDS0pdmXg10grS45RVpHhZSotKS5yZWAPsEpx9jFVl+RmLAotKnRkYNPzt4/SV5UTYmUsLioscGBgEDZ3M4pwF+dgLgoNLci3ZWCok1dUcFETZWEEyufnWAPdwcghIsjHAzQhNDQn2wLkMj9GRkYJsHx2lglIwLu0JBQCsjINQQKeJcVQ+cwMbZCAh5OTg52NpZmxga6WFgCqfj8jKC82iwAAAABJRU5ErkJggg==);}\n"
-".css { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAB/lBMVEVbiQAxOkY0PEdCRk1ER01DSE5FSE5FSU5FSU9QVFtSVltTV1tUV1tYXWVYXmVZXmZZX2ZaX2ZcYGZVgMhZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMF3jKpsjsBujr9ykL9ykb92k716lbt7lbx+l7qEmLOCmryFnb6LosKRp8aUqseXrMmZrMarq6ygsciwsLCxsrKysrKxtLq3uLq3uby5urq6urq6u72+vr6/v7/AwMDBwcG4w9XCwsLDw8O7xdW8xtbGxse/x9bEx8rHx8fIyMjGyczJycnKysrKysvAzODLy8vJzdXNzc3Dz+HD0OPH0eHQ0NDH0uPJ0+PJ0+TK1OLP09vK1OTS09TT09PU1NTN1uPO1uTX19fS2OHN2e3L2u7O2uzO2u3P2+7P3O/S3e3S3e7c3NzS3u7S3u/d3d3U3+7V3+/e3t7X3+7W4O/Y4O/g4ODZ4e/Z4fDT4/nb4/DW5Prc4/Dg5Ork5OTY5vra5vrm5ubb6Pvh5/Pd6frh6fTe6vvf6vvf6/zg6/vg6/zh6/rq6urg7Pzh7Pvh7Pzi7fzj7fvj7fzk7fvs7Ozj7vzj7v3k7vzl7vvl7vzl7v3t7e3m7/zm7/3n7/zn8P3v7+/o8P3p8f3w8PDq8vzr8v3s8/3t8/3t9P7u9P3v9f77+/v///8sMz1Z+tfuAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWCxgAFDIMt50mAAAA+0lEQVQY02NgYGBw93LR19HS1FBVZQABTzvPOR5OkZXLlqquAIkYFU23t7afkG2xZLHqCpCIa15U3PI4T2uDRQuBAkARn/lV0UFWlnaGC+apggCDTUdtho+NjbXevLkzpvX1APWYRxf52ZmZxs+eOXVSTxfYImM3E9/GWTMmT+zublMGCeiG18+dPXVyX3dnS5MSSEC7omxKf2FBa3Nmep0CSECNh7sklosrJ4STM1UOJMAUU1wg5JyZJeCQXC0NEliZ39seIRhaE8wXUC4JEmAMy21Ic+RPSbLlTRQHCciycQSys/gnsDJ7l4qABNRVVJQU5WWkJMREhYUBJxZIKfpN8fsAAAAASUVORK5CYII=);}\n"
-".js { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAB3VBMVEVYLbFER01DSE5FSE5FSU5GSk9GSlBHSlBQVFtTVltYXWVYXmVZX2ZVgMhZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMFsjsBuj9ykL9ykb92k716lbt7lbx+l7qCmyFnb6IoMCLosKMosKPpcSRp8aSqMaVq8iXMmZMaq6ygsciwsLCxsKysKxtLq3uLq3uby5uq6uq6u72+v6/v7/AwMDBwcG4w9XCwsLDw8O7xdXGxsfEx8Hx8fIyMjGyczJycnKysKysvAzODLy8vJzdXNzc3Dz+HD0OPG0eLQ0NDH0uLH0uPJ0uHJ0+PP09vS09TT09PU1NTX19fS2OHN2e3L2u7O2uzO2u3P2u3P3O/S3e7c3NzS3u7T3u3T3u7d3d3e3t7W3+/X3+7W4O/g4ODZ4e/T4/na4vHW5Pg5Ok5OTY5vm5ubb6Pvh5/Ph6fTe6vvf6vvf6vzf6/zg6/vg6/zq6ug7Pzh7Pvh7Pzi7Pvi7fzj7fvj7fzk7fzs7Ozj7vzj7v3k7vzl7vvl7vzl7v3t7e3l7/zl7/3m7/zm7/3n7/zn8Pzn8P3v7+/o8P3p8f3w8PDq8vz8v3s8/3t8/3t9P7u9P3v9f77+/v///9CRk39aEJDAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWCxgAGBB1YpPOAAAA+klEQVQY02NgYGBwdLHT1lBVUpCTYwABZyvniU62QTmzZ8nNBYnopXdam1s3JZnMnCE3FyRinxwcOifU2Vxn+jSgAFDEbUpuiI+ZqZXu1MlyIMBgUZkf52ZhYa41eVJPR0MdUI9xSLqHlZFh2ITe9pa6aBF+g4G7kV9Pa3NNTUVMiABzcDCSRPaWxtqqsqKpUEC6pMmtGWkppWXxMcWSIIE1Pq7sjhZ2RMCODhixEECKt3t1Sn+zL48NlF5oiAB5cb62op4tmg/bq9sYZCAYl1NcaI3R1SkJVeEIEhAoaI0loXRM5xpnmsmH0hAXlZWWkpCTERIgJ+XFwALWUR/+nMW1wAAAABJRU5EkJggg==);}\n"
+".folder { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6AAAdTAAAOpgAAA6lwAAF2+XqZnUAAADiUlEQVR4nGLQMzJl0NIzYNDXVucw01ZWNzAwkNQxNAGKGQLFNDmsDTQNoxyNslpi7Nb0Rps+NzPSdzYyMWUwBuL///8zAAQQQ7S9VlFrrNOKte35Ny6t6PpbG2ZzLtxWL7cx2nHh2pakO1eXlvx+f7D5//9bvf/PT/L4r6upkairrclgbmwoAzIAIAAAQQC+/wClc0/i//bW///1wf//9sD/89av/+/HkP//25f//9iC//7Sc//1vVX/8rBF/9OGMP99UjnJrYBh1HJLLd3///8AAgBBAL7/AIJdRLj/56f/+ddv//jSb//813f/+Mlj//G2Tf/qqUn/455O/+Sqcf/nuZD/8NS2///50//87LX/Z0guw////wACiCHD06z3x9VZ/39dyPn/cV/c/yeLA/4/XVME1vD+0rb/P95e+P/31zmg2qP///9bC6Tn/X9xOPW/h7n2TJABAAHEEGJvnP56X+v/32fS/z+Z7/n/073z///+vg6UOw3Em/7//7Pg///vU/7//9j7//+bTiDd8f/8HK//prrauSADAAKIwdFU3+XuioL/v44k/n88P+z/r09X/v//Oxei6dPE///fdv///6Ll///Htf//3y////9B/v81Veb/9HX07UAGAAQQgxkwWE9PS/r+c1f4/8dLMv7/+XISaEvP//+vO/7/f9bw///Div//7xT+/3896///Kyn//58L+98dq/1RU89EEmQAQAAxGOpo8W1ujnjxdaXL/6drK////7z9//9HZf//3yv9//8m0JVX0/7/Px8H9FH4//8nA///2+X4P9tN7ZS2gRkLyACAAGLQ0dVnmV3gd/LTLLP/z7cBnft6NlBT8v//FxOAmiL//z8eCAw/LyB2+///kP3/Z1O1/ntbaM/XN4IkJIAAYtDSN2ZoirRc9WGWw//Xh4CabwCdeyLg//9jvkBN7v//H7D//3Od6f8bvZr/5yar/IuyU79gbGziYGJiAjYAIIAYtA1NGbI9tLueTvP6//n8/P//zwT9/3/Q/v+fTeb/707Q+r8oXeVfirPaZWtD3W5tPRNLXSMzZpBmmAEAAcQAygth9npZdztc/n873vv/Zp/G/2VZqv9z3NRu2xnr9unoGTvqGJqxGQLTPkwjsgEAAcRgZGzCYGNuZFnppfYy1UX7lI2hTouunpEzMJB4DI0xNaEbABBAYIISDBBAFBsAEGAAg6Rt6VBtWbkAAAAASUVORK5CYII=); }\n"
+".html { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABfVBMVEVlIAkVLEIVLEMjLD4nMTweNlYiOFkmOV8ePWQcPmUfPG4eQHw3QjEhQn1ISDclUIImUptAUlYlUaYqWIwuXIpeWDEuXK1XWFRcWlAvYLBDZHE5YpszY7M3bqk6brk9dKQ5csxCdrxNeJxNeKlBes5Oe6aDdkBFfdBKhL5sgXlVgMhZgcZPhsdYgsVQhsdYhL5dhMRehMRJjtRhiMNiicNRjt9lisJYj9Rni8FpjMFvkKtsjsBujr9ykL9ykb9vl7h2k716lbt7lbx8m5quljd+l7pjoNqpmEqCmryFnb64mlOIoMCJorWLosKMosJ2qd2Aq9qRp8aerpWwsWiXrMmQrtadsc2jttHVt26pu9Taum+uvtfcvG+vwNjTwoazw9q4ybjk0IHy0nH30Yby15Xu3qvm3cvn4cbS4vrU4/rW5PrX5fvZ5vvw5sH+4L/b5/vc6Pve6fvg6vzh7Pzj7fzl7vz/8OXw9f7y9/7z9/3z9/7/9er0+P7///8XKUR12w5YAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWBhAMAgdyovnoAAAA6ElEQVQY02NgYGCIjwwPCwn09XR1ZYCA2BoIcK2FikRLc0pVVVZUuNZCRGTVkoJ0pDlDa4ECIBHZhLzcuGBNAcZyVxBgYOBPr05N9FIS4yoNDS0pdmXg10grS45RVpHhZSotKS5yZWAPsEpx9jFVl+RmLAotKnRkYNPzt4/SV5UTYmUsLioscGBgEDZ3M4pwF+dgLgoNLci3ZWCok1dUcFETZWEEyufnWAPdwcghIsjHAzQhNDQn2wLkMj9GRkYJsHx2lglIwLu0JBQCsjINQQKeJcVQ+cwMbZCAh5OTg52NpZmxga6WFgCqfj8jKC82iwAAAABJRU5ErkJggg==); }\n"
+".htm { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABfVBMVEVlIAkVLEIVLEMjLD4nMTweNlYiOFkmOV8ePWQcPmUfPG4eQHw3QjEhQn1ISDclUIImUptAUlYlUaYqWIwuXIpeWDEuXK1XWFRcWlAvYLBDZHE5YpszY7M3bqk6brk9dKQ5csxCdrxNeJxNeKlBes5Oe6aDdkBFfdBKhL5sgXlVgMhZgcZPhsdYgsVQhsdYhL5dhMRehMRJjtRhiMNiicNRjt9lisJYj9Rni8FpjMFvkKtsjsBujr9ykL9ykb9vl7h2k716lbt7lbx8m5quljd+l7pjoNqpmEqCmryFnb64mlOIoMCJorWLosKMosJ2qd2Aq9qRp8aerpWwsWiXrMmQrtadsc2jttHVt26pu9Taum+uvtfcvG+vwNjTwoazw9q4ybjk0IHy0nH30Yby15Xu3qvm3cvn4cbS4vrU4/rW5PrX5fvZ5vvw5sH+4L/b5/vc6Pve6fvg6vzh7Pzj7fzl7vz/8OXw9f7y9/7z9/3z9/7/9er0+P7///8XKUR12w5YAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWBhAMAhtmo6WnAAAA6ElEQVQY02NgYGCIjwwPCwn09XR1ZYCA2BoIcK2FikRLc0pVVVZUuNZCRGTVkoJ0pDlDa4ECIBHZhLzcuGBNAcZyVxBgYOBPr05N9FIS4yoNDS0pdmXg10grS45RVpHhZSotKS5yZWAPsEpx9jFVl+RmLAotKnRkYNPzt4/SV5UTYmUsLioscGBgEDZ3M4pwF+dgLgoNLci3ZWCok1dUcFETZWEEyufnWAPdwcghIsjHAzQhNDQn2wLkMj9GRkYJsHx2lglIwLu0JBQCsjINQQKeJcVQ+cwMbZCAh5OTg52NpZmxga6WFgCqfj8jKC82iwAAAABJRU5ErkJggg==); }\n"
+".css { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAB/lBMVEVbiQAxOkY0PEdCRk1ER01DSE5FSE5FSU5FSU9QVFtSVltTV1tUV1tYXWVYXmVZXmZZX2ZaX2ZcYGZVgMhZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMF3jKpsjsBujr9ykL9ykb92k716lbt7lbx+l7qEmLOCmryFnb6LosKRp8aUqseXrMmZrMarq6ygsciwsLCxsrKysrKxtLq3uLq3uby5urq6urq6u72+vr6/v7/AwMDBwcG4w9XCwsLDw8O7xdW8xtbGxse/x9bEx8rHx8fIyMjGyczJycnKysrKysvAzODLy8vJzdXNzc3Dz+HD0OPH0eHQ0NDH0uPJ0+PJ0+TK1OLP09vK1OTS09TT09PU1NTN1uPO1uTX19fS2OHN2e3L2u7O2uzO2u3P2+7P3O/S3e3S3e7c3NzS3u7S3u/d3d3U3+7V3+/e3t7X3+7W4O/Y4O/g4ODZ4e/Z4fDT4/nb4/DW5Prc4/Dg5Ork5OTY5vra5vrm5ubb6Pvh5/Pd6frh6fTe6vvf6vvf6/zg6/vg6/zh6/rq6urg7Pzh7Pvh7Pzi7fzj7fvj7fzk7fvs7Ozj7vzj7v3k7vzl7vvl7vzl7v3t7e3m7/zm7/3n7/zn8P3v7+/o8P3p8f3w8PDq8vzr8v3s8/3t8/3t9P7u9P3v9f77+/v///8sMz1Z+tfuAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWCxgAFDIMt50mAAAA+0lEQVQY02NgYGBw93LR19HS1FBVZQABTzvPOR5OkZXLlqquAIkYFU23t7afkG2xZLHqCpCIa15U3PI4T2uDRQuBAkARn/lV0UFWlnaGC+apggCDTUdtho+NjbXevLkzpvX1APWYRxf52ZmZxs+eOXVSTxfYImM3E9/GWTMmT+zublMGCeiG18+dPXVyX3dnS5MSSEC7omxKf2FBa3Nmep0CSECNh7sklosrJ4STM1UOJMAUU1wg5JyZJeCQXC0NEliZ39seIRhaE8wXUC4JEmAMy21Ic+RPSbLlTRQHCciycQSys/gnsDJ7l4qABNRVVJQU5WWkJMREhYUBJxZIKfpN8fsAAAAASUVORK5CYII=); }\n"
+".js { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAB3VBMVEVYLbFER01DSE5FSE5FSU5GSk9GSlBHSlBQVFtTVltYXWVYXmVZX2ZVgMhZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMFsjsBujr9ykL9ykb92k716lbt7lbx+l7qCmryFnb6IoMCLosKMosKPpcSRp8aSqMaVq8iXrMmZrMarq6ygsciwsLCxsrKysrKxtLq3uLq3uby5urq6urq6u72+vr6/v7/AwMDBwcG4w9XCwsLDw8O7xdXGxsfEx8rHx8fIyMjGyczJycnKysrKysvAzODLy8vJzdXNzc3Dz+HD0OPG0eLQ0NDH0uLH0uPJ0uHJ0+PP09vS09TT09PU1NTX19fS2OHN2e3L2u7O2uzO2u3P2u3P3O/S3e7c3NzS3u7T3u3T3u7d3d3e3t7W3+/X3+7W4O/g4ODZ4e/T4/na4vHW5Prg5Ork5OTY5vrm5ubb6Pvh5/Ph6fTe6vvf6vvf6vzf6/zg6/vg6/zq6urg7Pzh7Pvh7Pzi7Pvi7fzj7fvj7fzk7fzs7Ozj7vzj7v3k7vzl7vvl7vzl7v3t7e3l7/zl7/3m7/zm7/3n7/zn8Pzn8P3v7+/o8P3p8f3w8PDq8vzr8v3s8/3t8/3t9P7u9P3v9f77+/v///9CRk39aEJDAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWCxgAGBB1YpPOAAAA+klEQVQY02NgYGBwdLHT1lBVUpCTYwABZyvniU62QTmzZ8nNBYnopXdam1s3JZnMnCE3FyRinxwcOifU2Vxn+jSgAFDEbUpuiI+ZqZXu1MlyIMBgUZkf52ZhYa41eVJPR0MdUI9xSLqHlZFh2ITe9pa6arBF+g4G7kV9Pa3NNTUVMiABzcDCSRPaWxtqqsqKpUEC6pMmtGWkppWXxMcWSIIE1Pq7sjhZ2RMCODhixEECKt3t1Sn+zL48NlF5oiAB5cb62op4tmg/bq9sYZCAYl1NcaI3R1SkJVeEIEhAoaI0loXRM5xpnmsmH0hAXlZWWkpCTERIgJ+XFwALWUR/+nMW1wAAAABJRU5ErkJggg==); }\n"
 ".xhtml { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAulBMVEUAEK5ZgcZYgsVdhMRehMRhiMNiicNlisJni8FpjMH/ZgBsjsBuj9ykL9ykb92k716lbt7lbx+l7qCmyFnb6IoMCLosKMosKPpcSRp8aSqMaVq8iXMmQtaZcqdsc2jttGpu9SvwNizw9S4vU4/W5PX5fvZ5vvb5/vc6Pve6fvg6vzh7Pzj7fzl7vzm7/zo8P3q8f38v3t8/3v9P3w9v7y9/70+P71+f73+v75+/////9VgMjnfNz/AAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWBhALOjjWFH6AAAAmklEQVQY01WNhxLCIBBEsSuWGIy9xJYOpNkl//9b5gLDmIWZY97uLQghdDkd7d16YRGCpM7fz/v1fNyJAIL/BQSL6mA5S6Ie1cWkAFLpQTmjNRWBKOkXkqjKXx7uOVZmsSc0Sg0AGzzbC8VBmMAG+0H/hDAKk1Uwvf6AJba99wugHnMVcJ12gAs7TvXBoCZaRqT0aDXaTWL4gcXdhAp9vAVQAAAABJRU5EkJggg==); }\n"
 /* images */
 ".gif { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAACN1BMVEUJAQB5YFd1Y110Zmi5WESEbWSiZkeQb1SvaUtVgMiqbExXgcGFeXBZgcZYgsWSdXddhMRLpEpehMSCe5Z8gYi1b1Okd15hiMNiicNlisJni8GHhoWwe1ZpjMGLh45sjsC3eGtujr+4emRykL9ykb+5fmR2k72SjoyCnWq5gXB6lbuLj7B7lbyti2vOf1p+l7rEhGfMgly1jXSCmrytkIKtkX6/injifWChlZnTh1+Fnb7SiF3TiWDFkGnCkmmdnKOrlp2lmZ7PkGLDk3PYjGSTobC4loeLosKWn7vFlXHYkGWunZuRp8bKnHC7no+xopubq7vil2mXrMnMoJCbq97Mp4Kdsc3Pp4HkoG6yuIPlom/tnnPKqqGjttHNq57kqHbpqHOxw4LAtaqpu9Swu8WqvNXsrnnsr3qrwNSuvtfmsoKvwNjVt62vxNizw9rCyZPuuIS3yt3rv5Lvvo3twZDexqfpxZ7wxJX5w4jgyq290ufQ067iy6zyyJjzypzG1uLvzqDT09PX09H0z6LM2vHI3vL22rHU5Prt477R5vvW5Pr34LjW5frW5fvX5fvY5frY5vvZ5vvZ5/va5/ra5/vb5/v25cHc6Pvc6Pzc6fvc6fzd6fve6fve6vvf6/zq6eng6/zg7Pzh7Pvh7Pz66sXi7fzi7vfj7fzj7v3l7v3w7ezy8fTt8/3s9Pzr9f7t9P7u9P3v9P3v9f7w9f7w9v3x9v39+Nfy9/3y9/7z9/70+P7///9mUkupYZeaAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWBhAMARTdMev1AAAAHXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBUaGUgR0lNUO9kJW4AAAECSURBVBjTY2BgYMhLjg0L8nG30tdngIDsXbt2bt+yaYP+bqhI5q4dWzdvXL9GfzdUJHV1TnBc09p1QAGIiIOBiW5FvN8yfRBgYFhlFu3MIxNobujfsnL5UqCApoewl1OCCwuHZ/2KpYv0GWIUuPmj0gqKS2qL7BcvXqDFoKRnHZGeVd6QGFkmt3DeXDUGUUsuMVtW03xBDaOAuXNmKTOo2uyxCE+q7KguZW6dPX2KPIMbm7R3XduSbTWMuTOnT5kkxTBfvdGxuXtaKFPGjOmTJ/RJgBymbefLLlI1ferkif09QiCBkBTXws7pUyZO6O1q5wUJGOvoqKkoykqKC/BxcgIAmKJUjBV48xsAAAAASUVORK5CYII=); }\n"
@@ -37,7 +38,7 @@ static const char *dir_page =
 ".tar { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABaFBMVEVkZ2VmZjNpZ16DdjBVgMhZgcZYgsVdhMRehMRhiMOViDhiicNlisJni8FpjMGNiH9sjsBujr9ykL9ykb92k72dk1qjlUN6lbt7lbx+l7qZmWaCmryimHKunUqFnb6IoMClnpCLosK3p1ewpXiRp8aXrMmyqpadsc2jttG3tK3Junapu9TDu5+uvtevwNizw9rMzJncy33QyrfMzMzg0Y/kza3s0JzZ1szq2Lfp18Xq3avn2+TU5PrW5PrW5fro4trW5fvX5fvY5frY5vvZ5vvZ5/va5/ra5/vb5/vc6Pvc6Pzc6fvc6fzd6fvd6fze6fve6vve6vzf6vvf6vzf6/zg6/vg6/zg7Pzh7Pvh7Pz27cDi7fzj7fzj7vzj7v3k7vzl7vzl7v3m7/z179Tm7/3o8P3p8f3r8v3s8/3t8/3t9P7u9P3v9P3v9f7w9v3y9/35+Ojz9/70+P75+fb//8z+/v7///9lXBs5uUpRAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWBhAMARzT6mPHAAAA/ElEQVQY02NgYGDQ19ZQV1VRlJOUZIAAvaKiwvy83GzJMqiIrpGReXFOVqZkGUSE39yoIMrIPiMdKAAU0TQ2NzdS0DHQ0UmTBAEGteKygmRlUwsr0dSkxJhoSQblkqjkZKMoLVnmlIS46AigitICKystJTEx5vjYyMgwcQblZGtLUyVZMS7GmMjwkAARBmULI1MTJTEu5vLIsAB/HyEGKRMzQ0MxZq7y8tAAX093AQYGGSVDQ+bycsaQQG9Pd1deoMOYZJSYGcNCAr083ZwduUFOlY+ODAny8/Rwc3Gy4wAJyIUF+wO1uzg72NqwggSkJSREhAX5eDjZ2VhYAPTpNFDkSwh2AAAAAElFTkSuQmCC); }\n"
 /* other */
 ".pdf { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABPlBMVEVtCQJjAACMAAiUAABzGBitAAi1AADGAADOCAicISHOEBDnCBDWGBj3EBD3GBjOKTGcQkK9OTn3KSneOTm9SkrvOTn/MTnOSkq9UlreSkrvQkrnSkpVgMjvSkpZgcZYgsVdhMRehMTvUlLvUlphiMNiicPnWlplisLnWmNni8HWY2tpjMFsjsBujr9ykL9ykb92k716lbt7lbx+l7rnc3OCmryFnb6IoMD/c3Pve3uLosKMosLehISPpcSRp8aSqMbnjIyVq8iXrMmZrcqcsMydsc2jttHvnJypu9SsvtavwNizw9rvra3etb3v1tbS4vrU4/rW5PrX5fvZ5vvb5/vc6Pve6fvg6vzh7Pzj7fzl7vzn7/fm7/zo8P3q8f3r8v3t8/3v9P3w9v7y9/70+P71+f73+v75+/////9aAACwyNz9AAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAHdElNRQfWBhAMAijZc8SxAAAA0klEQVQY02NgYGDw9nBzdbKzMjM2ZoAAr/S01JTkpETjDKiIJ4SfYJwBEpEQERTXUFNWk+KPBwoARSxkxYT4+Hj5uFnjjEGAQZSHi4udg52VjSk2JioywpiBmTGTRQAIOAVA/HCwsS6JCfFxkmB+mCFIwBnI9xN2B/FDDUACjvFxsZbRDj5AfogeSMA+LtZP2sdHUlrJJlgHJGAbG6PmC1LvqxWkCRKwjtFwAPFDgoMCVUEC5iYmMH6AIkjALBLO95cDCZgaGRno62qrqyjIy8gAAGduNQKHw8HXAAAAAElFTkSuQmCC); }\n"
-
+"/*]]>*/\n"
 "</style>\n" /* css */
 "<meta http-equiv='Content-Type' content='application/xhtml+xml' />\n"
 "<title>Index of %s</title>\n" /* directory we are indexing */
@@ -55,10 +56,12 @@ static const char *dir_page =
 "</body></html>\n";
 
 static const char *dir_entry =
+"<div class='wrapper'>\n"
 "<div class='ico %s'></div>\n" /* base64 icon */
 "<div class='filename'><a href='%s'>%.25s</a></div>\n" /* file name, file name */
 "<div class='modified'>%s</div>\n" /* date last modified */
 "<div class='size'>%s</div>\n" /* size of file, string converted from the size */
+"</div>\n"
 "<br />\n";
 
 static const struct {
@@ -120,14 +123,16 @@ const int make_dir_list(connection *ret) {
 	char **entries = 0;
 
 	/* FIX THIS LATER */
-	char entrybuf[5 * KILOBYTE] = {0};
-	char filenamebuf[256] = {0};
+	unsigned long entrybuflen;
+	char *filenamebuf;
 	char iconbuf[10] = {0};
 	char timestampbuf[256] = {0};
 	char sizebuf[50];
 	unsigned long filesize = 0;
 	struct tm timetmp;
 	const char *timestr = "%d-%b-%Y %H:%M";
+
+	memset(&timetmp, 0, sizeof(struct tm));
 
 	int entrieslen = 0;
 
@@ -143,43 +148,43 @@ const int make_dir_list(connection *ret) {
 	 * 9. return all that shit */
 
 	/* 1. */
-	BARK("decoding URL \"%s\"\n", ret->req.resource+1);
+	/* put ./ into dir, so that we are always dealing with files relative to ./ */
 	strcpy(dir, "./");
+	/* decode URL */
 	url_decode(buf, ret->req.resource+1);
+	/* put the decoded url onto the end of ./ */
 	strcat(dir, buf);
-	BARK("decoded to \"%s\"\n", dir);
 
-	filecount = scandir(dir, &filelist, 0, alphasort);
+	filecount = scandir(dir, &filelist, NULL, alphasort);
 	if(filecount >= 0) {
+		/* something was found */
 		int cnt;
-		BARK("scandir got %d results\n", filecount);
 		entries = (char **) malloc(filecount * sizeof(char *));
 		memset(entries, 0, sizeof(entries));
 
-		/* something was found */
 		for(cnt = 0; cnt < filecount; ++cnt) {
-
-			/* first clear all buffers */
-			memset(entrybuf, 0, sizeof(entrybuf));
-			memset(filenamebuf, 0, sizeof(filenamebuf));
-			memset(iconbuf, 0, sizeof(iconbuf));
-			memset(timestampbuf, 0, sizeof(timestampbuf));
+			char statbuf[1024];
+			strcpy(statbuf, dir);
+			strcat(statbuf, filelist[cnt]->d_name);
 
 			/* 2. stat da file */
-			//BARK("going to stat %s\n", filelist[cnt]->d_name);
-			stat(filelist[cnt]->d_name, &stattmp);
+			stat(statbuf, &stattmp);
 
-			/* 3. what's yo name, bitch */
-			strncpy(filenamebuf, filelist[cnt]->d_name, 255);
+			/* 3. dupe the filename */
+			filenamebuf = strdup(filelist[cnt]->d_name);
+			filenamebuf = realloc(filenamebuf, strlen(filenamebuf) + 5);
 
 			/* 4. gimme an icon. */
 			if( S_ISREG(stattmp.st_mode) ) {
 				strcpy(iconbuf, icon_from_fname(filenamebuf) );
 				filesize = stattmp.st_size;
 				sprintf(sizebuf, "%lu", filesize);
+				//BARK("regular file '%s'\n", filenamebuf);
 			} else if(S_ISDIR(stattmp.st_mode)) {
 				strcpy(iconbuf, "folder");
 				strcpy(sizebuf, "-");
+				strcat(filenamebuf, "/");
+				//BARK("directory '%s'\n", filenamebuf);
 			} else {
 				/* isn't a regular file or folder... wtf is it? */
 				strcpy(iconbuf, "file");
@@ -190,38 +195,33 @@ const int make_dir_list(connection *ret) {
 			gmtime_r(&stattmp.st_mtime, &timetmp);
 			strftime(timestampbuf, 256, timestr, &timetmp);
 
-			/* 7. okay, now put all this shit in a fat buffer
-			 * using the html template
-			 * order = icon, filename, time modified, size */
-			int len = sprintf(entrybuf, dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, sizebuf);
-			entrieslen += len;
-			/* find the length of what we want to add */
-			entries[cnt] = (char *) malloc(len * sizeof(char));
-			memset(entries[cnt], 0, len);
-
-			strncpy(entries[cnt], entrybuf, len);
+			/* 7. put in buffer, order = icon, filename, time modified, size */
+			entrybuflen = 20 + strlen(dir_entry) + strlen(iconbuf) + strlen(filenamebuf) + strlen(timestampbuf) + strlen(sizebuf);
+			entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
+			int len = sprintf(entries[cnt], dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, sizebuf);
+			entrieslen += len + 1;
 
 			free(filelist[cnt]);
-
-			//BARK("finished %d items in directory \"%s\"\n", cnt, dir);
+			free(filenamebuf);
 
 		}
 
 		//BARK("concatenating %d strings totalling %d chars\n", cnt, entrieslen);
 
 		char *entriestotal = (char *) malloc(entrieslen * sizeof(char));
+		/* danke BhaaL */
+		memset(entriestotal, 0, entrieslen);
 
 		for(cnt = 0; cnt < filecount; ++cnt) {
 			strcat(entriestotal, entries[cnt]);
 			free(entries[cnt]);
 		}
 		free(entries);
-
 		free(filelist);
 
 		/* now add entries to the template */
 		int len = strlen(dir_page) + strlen(dir) + strlen(entriestotal);
-		ret->response.data = (char *) malloc(len * sizeof(char));
+		ret->response.data = (char *) malloc(20 + len * sizeof(char));
 
 		if(ret->response.data == NULL) {
 			/* d'oh, OOM! */
@@ -231,15 +231,17 @@ const int make_dir_list(connection *ret) {
 			return -1;
 		}
 
-		ret->response.content_size = sprintf(ret->response.data, dir_page, dir, dir, entriestotal);
+		ret->response.content_size = sprintf(ret->response.data, dir_page, dir+1, dir+1, entriestotal);
 
 		free(entriestotal);
-
+		/* our directory listings are XHTML 1.1 compliant, damnit! */
 		strcpy(ret->response.mimetype, "application/xhtml+xml");
 
 		return 0;
 	} else {
-		BARK("scandir: %s\n", strerror(errno));
+		BARK("scandir failed: %s\n", strerror(errno));
+		ret->response.status = HTTP_NOT_FOUND;
+		error_code_to_data( &(ret->response) );
 		return -1;
 	}
 

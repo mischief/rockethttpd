@@ -27,14 +27,8 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 		if(line == 0) {
 			/* parse the first line into subtokens: request method, resource, http ver */
 			if( (subtok = strtok_r(tok, " ", &substate)) != NULL ) {
-				/* copy the method string into the buffer, first allocating enough memory for it */
-				ret->req.request_method = (char *) malloc(sizeof(char) * strlen(subtok));
-				if(ret->req.request_method == NULL) {
-		                        ret->response.status = HTTP_INTERNAL_ERROR;
-                	        	error_code_to_data( &(ret->response) );
-	                        	return -1;
-				}
-				strcpy(ret->req.request_method, subtok);
+				/* duplicate string to data structure */
+				ret->req.request_method = strdup(subtok);
 				/* okay, now figure out what method that was. */
 				ret->req.request_type = get_request_type(subtok);
 
@@ -99,40 +93,23 @@ const int fulfill_request(connection *ret) {
 
 	if( strcmp( &ret->req.resource[strlen(ret->req.resource)-1], "/") == 0) {
 		/* we have a directory! */
-		getcwd(buf, 8 * KILOBYTE);
-		BARK("directory was requested: \"%s\"\n", buf);
-		memset(buf, 0, sizeof(buf));
 
-		/* oh, bother. no function to support directory lists now, 404 :D */
-
-		/* ========================
-		DIR FUNCTIONALITY GOES HERE
-		======================== */
-
-		if( make_dir_list(ret) != 0 ) return -1;
-		/*
-		ret->response.status = HTTP_NOT_FOUND;
-		error_code_to_data( &(ret->response) );
-		return -1;
-		*/
+		/* yay! directory listings work! sort of.. */
+		if( make_dir_list(ret) != 0 ) {
+			ret->response.status = HTTP_INTERNAL_ERROR;
+			error_code_to_data( &(ret->response) );
+			return -1;
+		}
 	} else {
 		/* we haz a file request. */
 		if( get_that_file(ret) != 0 ) return -1;
 	}
 
 	/* okay, content is dealt with. now make a correct header to send back */
-
-	/* shitty attempt at a half-decent header */
 	sprintf(buf, reply_header, http_code_to_str(status), ret->response.mimetype, ret->response.content_size, PROGRAM " " VERSION);
 	ret->response.header_size = strlen(buf);
-	ret->response.header = (char *) malloc(sizeof(char) * ret->response.header_size);
-	if(ret->response.header == NULL) {
-		ret->response.status = HTTP_INTERNAL_ERROR;
-		error_code_to_data( &(ret->response) );
-		return -1;
-	}
-
-	strcpy(ret->response.header, buf);
+	/* copy the buffer to the header output */
+	ret->response.header = strdup(buf);
 
 	/* done, now all the data should be sent off. :) */
 	return 0;

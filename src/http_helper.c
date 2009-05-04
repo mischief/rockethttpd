@@ -9,8 +9,8 @@ static const struct {
 	http_request_type type;
 } methods[] = {
 	{ "GET", GET },
-	{ "POST", POST },
-	{ "HEAD", HEAD },
+	//{ "POST", POST },
+	//{ "HEAD", HEAD },
 	{0, INVALID }
 };
 
