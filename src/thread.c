@@ -39,8 +39,13 @@ void *dispatch_request(void *arg) {
 
 		print_con_dat(c.conn); printf("recieved http request: %s %s %s\n", c.req.request_method, c.req.resource, c.req.http_ver);
 
-		if(fulfill_request(&c) < 0) {
-			/* if something does go bad it will probably show up here */
+		/* check if the connection is okay, if not,
+		 * error data is already taken care of and
+		 * can be sent off. */
+		if(c.response.status == HTTP_OK) {
+			if(fulfill_request(&c) < 0) {
+				/* if something does go bad it will probably show up here */
+			}
 		}
 		print_con_dat(c.conn); printf("sending response '%s'\n", http_code_to_str(c.response.status) );
 		/* send the header first*/

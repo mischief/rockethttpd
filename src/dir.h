@@ -14,6 +14,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <time.h>
+#include <math.h>
 #include <stdlib.h>
 #include <errno.h>
 
@@ -23,6 +24,10 @@
 const int make_dir_list(connection *ret);
 
 const char *icon_from_fname(const char *filename);
+
+const char *get_suffx_from_size(unsigned long bytes, float *floaty);
+
+int exist_index(connection *ret);
 
 int noparent(const struct dirent *entry);
 

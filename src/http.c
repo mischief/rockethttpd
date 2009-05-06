@@ -7,7 +7,7 @@ const char *reply_header =
 "%s\r\n" /* reply code + string */
 "Content-Type: %s\r\n" /* content type? */
 "Connection: close\r\n" /* maybe implement keep-alive later */
-"Content-Length: %lu\r\n" /* size of data after header */
+"Content-Length: %lu\r\n" /* size of data amfter header */
 "Server: %s\r\n\r\n"; /* PROGRAM " " VERSION */
 
 extern const char *error_skel;
@@ -15,6 +15,7 @@ extern const char *fallback_mime;
 extern const MIMEtype mime_types[];
 
 const int parse_http_request(char *data, const size_t len, connection *ret) {
+	ret->response.status = HTTP_OK;
 
 	char *tok, *state;
 	char *subtok, *substate;
@@ -104,12 +105,19 @@ const int fulfill_request(connection *ret) {
 	if( strcmp( &ret->req.resource[strlen(ret->req.resource)-1], "/") == 0) {
 		/* we have a directory! */
 
-		/* yay! directory listings work! */
-		if( make_dir_list(ret) != 0 ) {
-			ret->response.status = HTTP_NOT_FOUND;
-			error_code_to_data( &(ret->response) );
-			return -1;
+
+		/* first check for an index page */
+		if( exist_index(ret) ) {
+			if( get_that_file(ret) != 0 ) return -1;
+		} else {
+			/* yay! directory listings work! */
+			if( make_dir_list(ret) != 0 ) {
+				ret->response.status = HTTP_NOT_FOUND;
+				error_code_to_data( &(ret->response) );
+				return -1;
+			}
 		}
+
 	} else {
 		/* we haz a file request. */
 		if( get_that_file(ret) != 0 ) return -1;

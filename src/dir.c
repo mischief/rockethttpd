@@ -8,22 +8,14 @@ static const char *dir_page =
 /* css */
 "  <style type='text/css'>\n"
 "/*<![CDATA[*/\n"
-"  html, body { margin:0; padding:0; height:100%; }\n"
-"  #floaty { position:relative; float:left; height:50%; margin-bottom:-300px; width:1px; }\n"
-"  #centered { position:relative; clear:left; height:auto; width:50%; max-width:800px; min-width:200px;\n"
-"    margin:1em auto; background:#fff; border:2px solid #666; }\n"
-"  #content { left:5%; right:5%; top:0; bottom:0; font-family:Georgia, Times, serifs;\n"
-"    overflow:visible; height:auto; padding:10px 20px; margin:10px; }\n"
-"  .clear { clear:both; }\n"
-"  div.item, #top { width:520px; clear:both; margin:0px 0px 10px 0px; }\n"
-"  #top { font-weight:bold; padding: 5px 0px; }\n"
-"  .bar { width:100%; height:1px; background-color: black; margin: 1em 0px; }\n"
-"  div.ico { width:16px; height:16px; float:left; position:absolute; }\n"
-"  div.filename { width:250px; float:left; text-align:left; margin-left:25px; }\n"
+"  #content { border:#000000 2px solid; margin:5em auto 10px auto; font-family:Georgia, Times, serifs; width:560px; padding: 30px 50px; }\n"
+"  #top { font-weight:bold; padding: 7px 0; }\n"
+"  div.ico { width:16px; height:16px; float:left; }\n"
+"  div.filename { width:270px; float:left; text-align:left; margin-left:10px; }\n"
 "  div.modified { width:150px; float:left; text-align:left; }\n"
-"  div.size { width:50px; float:right; text-align:left; margin-left:30px; }\n"
-"  .wrapper { font-weight: bold; margin: 0 auto; } .wrapper .wrapper { font-weight: normal; }\n"
-"  hr { clear:both; display:block; /* visibility:hidden; */ }\n"
+"  div.size { width:80px; float:right; text-align:right; }\n"
+"  .clear { clear:both; }\n"
+"  .bar { border-top:#000000 1px solid; margin-bottom:5px; clear:both; }\n"
 /* arrow */
 "  .arrow { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAVElEQVR42qWT0QoAIAgD9/8fbYEQSGLONrC3O1IRZraUgj/AV0kC6QdSC9IMInhCC6pQgipUC12eAialgImzbhn03K5xAidB3G8HJsENj64xwtNz3iu3wU8Fir11AAAAAElFTkSuQmCC); }\n"
 /* texts */
@@ -56,43 +48,28 @@ static const char *dir_page =
 "  <title>Index of %s</title>\n" /* directory we are indexing */
 "</head>\n\n"
 "<body>\n"
-"  <div id='floaty'></div>\n"
-"  <div id='centered'>\n"
-"    <div id='content'>\n"
-"      <h2>Index of %s</h2>\n"
-"      <div id='top'>\n"
-"        <div class='ico'></div>\n"
-"        <div class='filename'>\n"
-"          Filename\n"
-"        </div>\n\n"
-"        <div class='modified'>\n"
-"          Last Modified\n"
-"        </div>\n\n"
-"        <div class='size'>\n"
-"        Size\n"
-"        </div>\n"
-"      </div>\n"
-"      <div class='bar'></div>\n"
+"	<div id='content'>\n"
+"		<h2>Index of %s</h2>\n"
+"		<div id='top'>\n"
+"			<div class='ico'></div>\n"
+"			<div class='filename'>Filename</div>\n"
+"			<div class='modified'>Last Modified</div>\n"
+"			<div class='size'>Size</div>\n"
+"		</div>\n"
+"		<div class='bar'></div>\n\n"
 "%s" /* dir_entry listing goes here */
-"      <div class='clear'></div>\n"
-"    </div>\n"
-"  </div>\n"
+"	</div>\n"
 "</body>\n"
 "</html>\n";
 
 static const char *dir_entry =
-"    <div class='item'>\n"
-"      <div class='ico %s'></div>\n\n" /* base64 icon */
-"      <div class='filename'>\n"
-"        <a href='%s'>%.25s</a>\n"
-"      </div>\n\n" /* file name, file name */
-"      <div class='modified'>\n"
-"        %s\n"
-"      </div>\n\n" /* date last modified */
-"      <div class='size'>\n"
-"        %s\n"
-"      </div>\n" /* size of file, string converted from the size */
-"    </div>\n\n";
+"		<div>\n"
+"			<div class='ico %s'></div>\n" /* base64 icon */
+"			<div class='filename'><a href='%s'>%.30s</a></div>\n" /* file name, file name */
+"			<div class='modified'>%s</div>\n" /* date last modified */
+"			<div class='size'>%s %s</div>\n" /* size of file and suffix */
+"		</div>\n"
+"		<div class='clear'></div>\n\n";
 
 static const struct {
 	char *ext;
@@ -158,7 +135,8 @@ const int make_dir_list(connection *ret) {
 	char iconbuf[10] = {0};
 	char timestampbuf[256] = {0};
 	char sizebuf[50];
-	unsigned long filesize = 0;
+	float bytes = 0;
+	const char *suffix = 0;
 	struct tm timetmp;
 	const char *timestr = "%d-%b-%Y %H:%M";
 
@@ -213,13 +191,19 @@ const int make_dir_list(connection *ret) {
 			/* 4. gimme an icon. */
 			if( S_ISREG(stattmp.st_mode) ) {
 				strcpy(iconbuf, icon_from_fname(filenamebuf) );
-				filesize = stattmp.st_size;
-				sprintf(sizebuf, "%lu", filesize);
+				/* change it into a proper binary suffix */
+				suffix = get_suffx_from_size(stattmp.st_size, &bytes);
+				if(bytes==floor(bytes)) {
+					sprintf(sizebuf, "%.0f", bytes);
+				} else {
+					sprintf(sizebuf, "%.1f", bytes);
+				}
 				//BARK("regular file '%s'\n", filenamebuf);
 			} else if(S_ISDIR(stattmp.st_mode)) {
 				strcpy(iconbuf, "folder");
 				strcpy(sizebuf, "-");
 				strcat(filenamebuf, "/");
+				suffix = "";
 				//BARK("directory '%s'\n", filenamebuf);
 			} else {
 				/* isn't a regular file or folder... wtf is it? */
@@ -240,11 +224,11 @@ const int make_dir_list(connection *ret) {
 			if( strcmp(filenamebuf, "../") == 0) {
 				entrybuflen = 10 + strlen(dir_entry) + strlen("arrow") + strlen(filenamebuf) + strlen("Parent Directory") + strlen(sizebuf);
 				entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
-				len = sprintf(entries[cnt], dir_entry, "arrow", filenamebuf, "Parent Directory", "", sizebuf);
+				len = sprintf(entries[cnt], dir_entry, "arrow", filenamebuf, "Parent Directory", "", sizebuf, "");
 			} else {
 				entrybuflen = 10 + strlen(dir_entry) + strlen(iconbuf) + (strlen(filenamebuf)*2) + strlen(timestampbuf) + strlen(sizebuf);
 				entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
-				len = sprintf(entries[cnt], dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, sizebuf);
+				len = sprintf(entries[cnt], dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, sizebuf, suffix);
 			}
 			entrieslen += len + 1;
 
@@ -280,8 +264,10 @@ const int make_dir_list(connection *ret) {
 		ret->response.content_size = sprintf(ret->response.data, dir_page, dir+1, dir+1, entriestotal);
 
 		free(entriestotal);
-		/* our directory listings are XHTML 1.1 compliant, damnit! */
-		strcpy(ret->response.mimetype, "application/xhtml+xml");
+		/* our directory listings are XHTML 1.0 Strict compliant, damnit :(
+		* sigh, send as text/html to compensate for IE and other crap browsers..
+		* even though that isn't ideal and is read as tag soup.. */
+		strcpy(ret->response.mimetype, "text/html");
 
 		return 0;
 	} else {
@@ -308,6 +294,67 @@ const char *icon_from_fname(const char *filename) {
 
 	/* no icon. send a blank one. */
 	return "file";
+}
+
+const char *get_suffx_from_size(unsigned long bytes, float *floaty) {
+	static char const *suffix[] = {"B", "KiB", "MiB", "GiB", "TiB", "PiB", 0};
+	int i;
+	*floaty = bytes;
+
+	for(i = 0; bytes > 1024; ++i) {
+		bytes /= 1024;
+		*floaty /= 1024;
+		}
+	if(suffix[i] == 0)
+		return suffix[6];
+
+	return suffix[i];
+}
+
+int exist_index(connection *ret) {
+
+	DIR *dp;
+	struct dirent *ep;
+	char dir[FILENAME_MAX] = {0};
+	char buf[FILENAME_MAX] = {0};
+	strcpy(dir, "./");
+	url_decode(buf, ret->req.resource+1);
+	strcat(dir, buf);
+
+	dp = opendir (dir);
+	if (dp != NULL)
+	{
+		while ( (ep = readdir (dp))  ) {
+			if( strcmp(ep->d_name, "index.xhtml") == 0) {
+				strcpy(buf, dir);
+				strcat(buf, ep->d_name);
+				free(ret->req.resource);
+				ret->req.resource = strdup(buf+1);
+				closedir (dp);
+				return 1;
+			} else if( strcmp(ep->d_name, "index.html") == 0) {
+				strcpy(buf, dir);
+				strcat(buf, ep->d_name);
+				free(ret->req.resource);
+				ret->req.resource = strdup(buf+1);
+				closedir (dp);
+				return 1;
+			} else if( strcmp(ep->d_name, "index.htm") == 0) {
+				strcpy(buf, dir);
+				strcat(buf, ep->d_name);
+				free(ret->req.resource);
+				ret->req.resource = strdup(buf+1);
+				closedir (dp);
+				return 1;
+			}
+		}
+
+		closedir (dp);
+	}
+	else
+	BARK("failed reading directory %s\n", dir);
+
+	return 0;
 }
 
 int noparent(const struct dirent *entry) {

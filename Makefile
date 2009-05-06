@@ -1,6 +1,6 @@
 # -O0 for no optimization
-#CFLAGS = -Wall -O -D_POSIX_C_SOURCE=199506L -D_GNU_SOURCE
-CFLAGS = -Wall -g -D_POSIX_C_SOURCE=199506L -D_GNU_SOURCE
+CFLAGS = -Wall -O -D_POSIX_C_SOURCE=199506L -D_GNU_SOURCE
+#CFLAGS = -Wall -g -D_POSIX_C_SOURCE=199506L -D_GNU_SOURCE
 
 # final executeable name
 OUTPUT = rockethttpd
@@ -9,7 +9,9 @@ VPATH = src
 
 OBJECTS = main.o thread.o dir.o http.o http_helper.o http_error.o networking.o
 
-$(OUTPUT) : $(OBJECTS) -lpthread
+LIBS = -lpthread -lm
+
+$(OUTPUT) : $(OBJECTS) $(LIBS)
 	$(CC) $(CFLAGS) $^ -o $@
 
 main.o : main.c thread.h networking.h
@@ -28,9 +30,9 @@ dir.o : dir.c dir.h
 	$(CC) -c $(CFLAGS) $< -o $@
 $(OBJECTS) : defs.h common_types.h
 
-debug : $(OBJECTS) -lpthread
+debug : $(OBJECTS) $(LIBS)
 	$(CC) -Wall -g $^ -o debug
 
 .PHONY: clean
 clean :
-	$(RM) $(OUTPUT) *.o
+	$(RM) $(OUTPUT) debug *.o
