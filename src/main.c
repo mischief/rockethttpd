@@ -1,4 +1,7 @@
 #include "defs.h"
+#include "thread.h"
+#include "common_types.h"
+#include "networking.h"
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -25,34 +28,25 @@
 /* threading header */
 #include <pthread.h>
 
-#include "thread.h"
-#include "common_types.h"
-#include "networking.h"
-
-
-void usage(char *prog)
-{
+void usage(char *prog) {
 	printf(	"[-] usage:\n"
 		"[-]	%s [port] [webroot]\n"
 		"[-]	%s -?		this help\n", prog, prog);
 	exit(1);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	printf("[+] %s built on %s %s\n", VERSTRING, __DATE__, __TIME__);
 
-/*	this #ifdef block is to set up windows-only socket related matter,
-	and registering WSACleanup() with atexit() so what we know it is
-	called when any call to exit() is made.
-*/
+/* this #ifdef block is to set up windows-only socket related matter,
+ * and registering WSACleanup() with atexit() so what we know it is
+ * called when any call to exit() is made. */
 
 #ifdef WIN32
 	WSADATA wsadat;
 	WSAStartup(MAKEWORD(2,2),&wsadat);
-	if( !atexit(WSACleanup()) )
-	{
-		fprintf(stderr, "[-] in file \"%s\", line %d: Registering WSACleanup() with atexit() failed\n", __FILE__, __LINE__);
+	if( !atexit(WSACleanup()) ) {
+		BARK("Registering WSACleanup() with atexit() failed\n");
 		return EXIT_FAILURE;
 	}
 #endif
@@ -72,10 +66,10 @@ int main(int argc, char **argv)
 	memset(servport, 0, sizeof(servport));
 
 	if(chdir(argv[2]) == -1) {
-		fprintf(stderr, "[-] in file \"%s\", line %d: chdir( \"%s\" ): %s\n", __FILE__, __LINE__, argv[2], strerror(errno));
-		exit(5);
+		BARK("chdir('%s') failed: %s\n", argv[2], strerror(errno));
+		exit(1);
 	} else {
-		//printf("[+] chdir() to %s\n", argv[2]);
+		printf("[+] chdir() to %s\n", argv[2]);
 	}
 
 	sockfd serv_sock = {0}; // server socket
@@ -95,33 +89,29 @@ int main(int argc, char **argv)
 
 	rv = getaddrinfo(NULL, port, &hints, &servinfo);
 	if (rv != 0) {
-		fprintf(stderr, "[-] in file \"%s\", line %d: getaddrinfo: %s\n", __FILE__, __LINE__, gai_strerror(rv));
+		BARK("getaddrinfo(): %s\n", gai_strerror(rv));
 		return EXIT_FAILURE;
 	}
 
 	struct addrinfo *addr;
-	for(addr = servinfo; addr != NULL; addr = addr->ai_next)
-	{
+	for(addr = servinfo; addr != NULL; addr = addr->ai_next) {
 		// fetch ourselves a socket file descriptor.
-		if ((serv_sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol)) == -1)
-		{
-			fprintf(stderr, "[-] in file \"%s\", line %d: socket: %s\n", __FILE__, __LINE__, strerror(errno));
+		if ((serv_sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol)) == -1) {
+			BARK("socket(): %s\n", strerror(errno));
 			continue;
 		}
 
 		/*	this turns SO_REUSEADDR on. what this does is allow the
 			program to re-use the socket even if it is closed unexpectedly.
 		*/
-		if (setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
-		{
-			fprintf(stderr, "[-] in file \"%s\", line %d: setsockopt: %s\n", __FILE__, __LINE__, strerror(errno));
+		if (setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+			BARK("setsockopt(): %s\n", strerror(errno));
 			exit(1);
 		}
 
-		if (bind(serv_sock, addr->ai_addr, addr->ai_addrlen) == -1)
-		{
+		if (bind(serv_sock, addr->ai_addr, addr->ai_addrlen) == -1) {
 			close(serv_sock);
-			fprintf(stderr, "[-] in file \"%s\", line %d: bind: %s\n", __FILE__, __LINE__, strerror(errno));
+			BARK("bind(): %s\n", strerror(errno));
 			continue;
 		}
 
@@ -129,16 +119,15 @@ int main(int argc, char **argv)
 
 	}
 
-	/* figure out who we are */
-	rv = getnameinfo(addr->ai_addr, addr->ai_addrlen, servip, sizeof(servip), servport, sizeof(servport), NI_NUMERICHOST | NI_NUMERICSERV);
-	if (rv != 0) {
-		fprintf(stderr, "[-] in file \"%s\", line %d: getnameinfo: %s\n", __FILE__, __LINE__, gai_strerror(rv));
+	if (addr == NULL) {
+		BARK("failed to bind\n");
 		return EXIT_FAILURE;
 	}
 
-	if (addr == NULL)
-	{
-		fprintf(stderr, "[-] in file \"%s\", line %d: failed to bind\n", __FILE__, __LINE__);
+	/* figure out who we are */
+	rv = getnameinfo(addr->ai_addr, addr->ai_addrlen, servip, sizeof(servip), servport, sizeof(servport), NI_NUMERICHOST | NI_NUMERICSERV);
+	if (rv != 0) {
+		BARK("getnameinfo(): %s\n", gai_strerror(rv));
 		return EXIT_FAILURE;
 	}
 
@@ -156,17 +145,15 @@ int main(int argc, char **argv)
 
 	/* now set up the listening socket */
 
-	if (listen(serv_sock, BACKLOG) == -1)
-	{
-		fprintf(stderr, "[-] in file \"%s\", line %d: listen: %s\n", __FILE__, __LINE__, strerror(errno));
+	if (listen(serv_sock, BACKLOG) == -1) {
+		BARK("listen(): %s\n", strerror(errno));
 		return EXIT_FAILURE;
 	}
 
 	printf("[+] %s: waiting for connections on %s:%s\n", PROGRAM, servip, port);
 
 	/* main server loop */
-	while(1)
-	{
+	while(1) {
 		sockfd x;
 		struct sockaddr_storage client;
 		socklen_t client_socksize;
@@ -184,18 +171,15 @@ int main(int argc, char **argv)
 		strcpy(p->port, port);
 		strcpy(p->serverip, servip);
 
-		if (p->socket == -1)
-		{
+		if (p->socket == -1) {
 			free(p);
-			fprintf(stderr, "[-] in file \"%s\", line %d: accept: %s\n", __FILE__, __LINE__, strerror(errno));
+			BARK("accept(): %s\n", strerror(errno));
 		} else {
 			/* do the real bsns */
-			if(pthread_create(&client_thr, &attr, dispatch_request, (void *) p) != 0)
-			/* couldn't create a thread :( */
-			{
-
+			if(pthread_create(&client_thr, &attr, dispatch_request, (void *) p) != 0) {
+				/* couldn't create a thread :( */
 				free(p);
-				fprintf(stderr, "[-] in file \"%s\", line %d: pthread_create: %s\n", __FILE__, __LINE__, strerror(errno));
+				BARK("pthread_create(): %s\n", strerror(errno));
 			}
 		}
 

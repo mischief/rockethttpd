@@ -1,13 +1,12 @@
 #include "http.h"
 
 /*	see this for info on the reply skeleton
-	http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html
-*/
+ * http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html */
 
 const char *reply_header =
 "%s\r\n" /* reply code + string */
-"Content-Type: %s\r\n"
-"Connection: close\r\n"
+"Content-Type: %s\r\n" /* content type? */
+"Connection: close\r\n" /* maybe implement keep-alive later */
 "Content-Length: %lu\r\n" /* size of data after header */
 "Server: %s\r\n\r\n"; /* PROGRAM " " VERSION */
 
@@ -20,7 +19,7 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 	char *tok, *state;
 	char *subtok, *substate;
 
-	char crlf[] = "\r\n"; // this is how we break the request into useable pieces. :)
+	char crlf[] = "\r\n"; /* this is how we break the request into useable pieces. :) */
 	int line = 0;
 
 	while( (tok = strtok_r(data, crlf, &state)) != NULL ) {
@@ -48,15 +47,20 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 			the first param has to be null if i expect this to work right */
 
 			/* okay, now parse the HTTP resource string. */
-			if( (subtok = strtok_r(NULL, " ", &substate)) != NULL ) { // next the file
-				if(strlen(subtok) > FILENAME_MAX) { // this is the size of the resource requested.
+			if( (subtok = strtok_r(NULL, " ", &substate)) != NULL ) {
+				if(strlen(subtok) > FILENAME_MAX) {
 					/* alright, if you're submitting shit this big, gtfokthx. */
 					ret->response.status = HTTP_URI_TOO_LONG;
 					error_code_to_data( &(ret->response) );
 					return -1;
 				} else {
 					/* copy the resource string to the struct */
-					strncpy(ret->req.resource, subtok, 1 * KILOBYTE); /* only copy 1kb for now. :> */
+					ret->req.resource = strdup(subtok);
+					if(ret->req.resource == NULL) {
+						ret->response.status = HTTP_INTERNAL_ERROR;
+						error_code_to_data( &(ret->response) );
+						return -1;
+					}
 				}
 			}
 
@@ -100,9 +104,9 @@ const int fulfill_request(connection *ret) {
 	if( strcmp( &ret->req.resource[strlen(ret->req.resource)-1], "/") == 0) {
 		/* we have a directory! */
 
-		/* yay! directory listings work! sort of.. */
+		/* yay! directory listings work! */
 		if( make_dir_list(ret) != 0 ) {
-			ret->response.status = HTTP_INTERNAL_ERROR;
+			ret->response.status = HTTP_NOT_FOUND;
 			error_code_to_data( &(ret->response) );
 			return -1;
 		}
@@ -152,7 +156,6 @@ const int get_that_file(connection *ret) {
 	/* a little trickery from cplusplus.com to get the file size */
 	fseek(ret->response.file, 0, SEEK_END);
 	ret->response.content_size = ftell (ret->response.file);
-	// better go to the beginning!
 	rewind(ret->response.file);
 	/* get us a nice fat buffer for the file */
 	ret->response.data = (char*) malloc(sizeof(char) * ret->response.content_size);
@@ -174,12 +177,8 @@ const int get_that_file(connection *ret) {
 		error_code_to_data( &(ret->response) );
 		   return -1;
 	}
-	char *dir = get_current_dir_name();
-	strcpy(buf, dir);
-	free(dir);
-	print_con_dat(ret->conn); printf("read %lu bytes from file \"%s/%s\"\n", bytes, buf, ret->req.resource+1);
 	return 0;
-} // end of get_that_file
+} /* end of get_that_file */
 
 void connection_destroy(connection *p) {
 	/*	make sure to call this when we're done with the structure!	*/
@@ -188,6 +187,9 @@ void connection_destroy(connection *p) {
 	/* first the request bits */
 	if(p->req.request_method != NULL)
 		free(p->req.request_method);
+
+	if(p->req.resource != NULL)
+		free(p->req.resource);
 
 	/* now the reply bits */
 	if(p->response.header != NULL)

@@ -10,6 +10,7 @@
 #include "common_types.h"
 
 /* get the method type of the HTTP request */
+
 const http_request_type get_request_type(const char *str);
 
 /* this returns a mime type based on the resource given,

@@ -20,23 +20,23 @@ char *get_ip_str(const struct sockaddr *sa, char *s, size_t maxlen) {
 }
 
 int sendall(int s, char *buf, int *len) {
-	int total = 0;        // how many bytes we've sent
-	int bytesleft = *len; // how many we have left to send
+	int total = 0;        /* how many bytes we've sent */
+	int bytesleft = *len; /* how many we have left to send */
 	int n = 0;
 
 	while(total < *len) {
 		n = send(s, buf+total, bytesleft, MSG_NOSIGNAL);
 		if (n <= 0) {
-			// well, either the connection died or we have an error.
+			/* well, either the connection died or we have an error. */
 			break;
 		}
 		total += n;
 		bytesleft -= n;
 	}
 
-	*len = total; // return number actually sent here
+	*len = total; /* return number actually sent here */
 
-	return n==-1?-1:0; // return -1 on failure, 0 on success
+	return n==-1?-1:0; /* return -1 on failure, 0 on success */
 }
 
 void print_con_dat(connection_data *c) {

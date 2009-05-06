@@ -1,6 +1,6 @@
 # -O0 for no optimization
-CFLAGS = -Wall -O -D_POSIX_C_SOURCE=199506L -D_GNU_SOURCE
-#CFLAGS = -Wall -g -D_POSIX_C_SOURCE=199506L -D_GNU_SOURCE
+#CFLAGS = -Wall -O -D_POSIX_C_SOURCE=199506L -D_GNU_SOURCE
+CFLAGS = -Wall -g -D_POSIX_C_SOURCE=199506L -D_GNU_SOURCE
 
 # final executeable name
 OUTPUT = rockethttpd

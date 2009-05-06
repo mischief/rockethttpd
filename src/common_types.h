@@ -36,7 +36,7 @@ typedef enum {
 typedef struct {
 	http_request_type request_type;
 	char *request_method;
-	char resource[FILENAME_MAX];
+	char *resource;
 	char http_ver[20];
 	char headers[1 * KILOBYTE];
 } http_data_in;

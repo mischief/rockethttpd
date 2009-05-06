@@ -1,14 +1,15 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
+#include "defs.h"
+#include "common_types.h"
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
-
-#include "common_types.h"
 
 char *get_ip_str(const struct sockaddr *sa, char *s, size_t maxlen);
 
