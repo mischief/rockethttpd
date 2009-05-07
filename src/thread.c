@@ -12,7 +12,6 @@ void *dispatch_request(void *arg) {
 		sizeof(c.conn->clientip), c.conn->clientport, sizeof(c.conn->clientport), NI_NUMERICHOST | NI_NUMERICSERV);
 	if ( rv != 0) {
 		BARK("getnameinfo(): %s\n", gai_strerror(rv));
-		//return EXIT_FAILURE;
 	}
 
 	print_con_dat(c.conn); printf("connection established\n");
@@ -26,11 +25,11 @@ void *dispatch_request(void *arg) {
 
 	if((nbytes = read(c.conn->socket, buf, sizeof(buf) )) <= 0) {
 		if(nbytes == 0) {
-		/* connection closed, what to do? */
-	} else {
-		/* -1, we have a problem :( */
-		BARK("recv(): %s\n", strerror(errno));
-	}
+			/* connection closed, what to do? */
+		} else {
+			/* -1, we have a problem :( */
+			BARK("recv(): %s\n", strerror(errno));
+		}
 	} else {
 		/* okay, got some data! figure out what the hell it was. */
 		in+=nbytes;
@@ -59,12 +58,11 @@ void *dispatch_request(void *arg) {
 		/* send off the content, gogo! */
 		if(c.response.sendfile > 0) {
 			/* if we were instructed to send a file, use senfile(). */
-			BARK("going to sendfile()!\n");
 			nbytes = sendfile(c.conn->socket, c.response.file, 0, c.response.content_size);
-			BARK("sendfile() send %d bytes\n", nbytes);
 			if(nbytes < 0) {
 				BARK("sendfile(): %s\n", strerror(errno));
 			}
+			close(c.response.file);
 		} else {
 			/* otherwise, send the data buffer. */
 			nbytes = c.response.content_size;
