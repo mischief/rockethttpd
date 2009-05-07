@@ -26,6 +26,11 @@ static const MIMEtype mime_types[] = {
 	{	"css",	"text/css"						}, /* .css */
 	{	"js",	"application/javascript"		}, /* .js */
 	{	"xhtml","application/xhtml+xml"			}, /* .xhtml */
+	{	"c",	"text/plain"					}, /* .c */
+	{	"h",	"text/plain"					}, /* .h */
+	{	"cc",	"text/plain"					}, /* .cc */
+	{	"cpp",	"text/plain"					}, /* .cpp */
+	{	"hpp",	"text/plain"					}, /* .hpp */
 	/* images */
 	{	"gif",	"image/gif"						}, /* .gif */
 	{	"jpg",	"image/jpeg"					}, /* .jpg */
@@ -42,8 +47,10 @@ static const MIMEtype mime_types[] = {
 	{	"zip",	"application/zip"				}, /* .zip */
 	{	"gz",	"application/x-gzip"			}, /* .gz */
 	{	"tar",	"application/x-tar"				}, /* .tar */
+	{	"tgz",	"application/x-compressed"		}, /* .tgz */
 	/* other */
 	{	"pdf",	"application/pdf"				}, /* .pdf */
+	{	"exe",	"application/octet-stream"		}, /* .exe */
 	/* sentinel, do not remove */
 	{0,0}
 };

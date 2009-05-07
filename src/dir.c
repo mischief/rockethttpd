@@ -8,6 +8,7 @@ static const char *dir_page =
 /* css */
 "  <style type='text/css'>\n"
 "/*<![CDATA[*/\n"
+"  body { background:#F; }\n"
 "  #content { border:#000000 2px solid; margin:5em auto 10px auto; font-family:Georgia, Times, serifs; width:560px; padding: 30px 50px; }\n"
 "  #top { font-weight:bold; padding: 7px 0; }\n"
 "  div.ico { width:16px; height:16px; float:left; }\n"
@@ -74,50 +75,23 @@ static const char *dir_entry =
 static const struct {
 	char *ext;
 } icons[] = {
-	/* text */
-	/* .html */
 	{"html"},
-	/* .htm */
 	{"htm"},
-	/* .css */
 	{"css"},
-	/* .js */
 	{"js"},
-	/* .xhtml */ /* use xml icon for now. */
 	{"xhtml"},
-	/* images */
-	/* .gif */
 	{"gif"},
-	/* .jpg */
 	{"jpg"},
-	/* .jpeg */
 	{"jpeg"},
-	/* .png */
 	{"png"},
-	/* .ico */
-	/* {"ico"}, */
-	/* audio */
-	/* .mp3 */
 	{"mp3"},
-	/* .ogg */
 	{"ogg"},
-	/* archives */
-	/* .7z */
-	/* {"7z","application/x-7z-compressed"}, */
-	/* .rar */
 	{"rar"},
-	/* .bz2 */
 	{"bz2"},
-	/* .zip */
 	{"zip"},
-	/* .gz */
 	{"gz"},
-	/* .tar */
 	{"tar"},
-	/* other */
-	/* .pdf */
 	{"pdf"},
-	/* sentinel, do not remove */
 	{0}
 };
 
@@ -251,7 +225,7 @@ const int make_dir_list(connection *ret) {
 
 		/* now add entries to the template */
 		int len = strlen(dir_page) + strlen(dir) + strlen(entriestotal);
-		ret->response.data = (char *) malloc(20 + len * sizeof(char));
+		ret->response.data = (char *) malloc(len * (10 + sizeof(char)));
 
 		if(ret->response.data == NULL) {
 			/* d'oh, OOM! */

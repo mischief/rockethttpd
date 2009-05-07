@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <pthread.h>
 
+#include <sys/sendfile.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 

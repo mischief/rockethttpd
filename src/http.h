@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 // this is a pointer to the data recieved from the client.
 // the length of the data recieved from the client.

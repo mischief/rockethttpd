@@ -48,9 +48,10 @@ typedef struct {
 	char *header;
 	unsigned long header_size;
 	char *data;
-	unsigned long content_size;
+	size_t content_size;
 	char mimetype[100];
-	FILE *file;
+	int file;
+	unsigned char sendfile;
 } http_data_out;
 
 /* structure to hold the socket data passed to the thread*/

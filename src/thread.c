@@ -29,7 +29,7 @@ void *dispatch_request(void *arg) {
 		/* connection closed, what to do? */
 	} else {
 		/* -1, we have a problem :( */
-		fprintf(stderr, "[-] in file \"%s\", line %d: recv: %s\n", __FILE__, __LINE__, strerror(errno));
+		BARK("recv(): %s\n", strerror(errno));
 	}
 	} else {
 		/* okay, got some data! figure out what the hell it was. */
@@ -57,10 +57,21 @@ void *dispatch_request(void *arg) {
 		out+=nbytes;
 
 		/* send off the content, gogo! */
-		nbytes = c.response.content_size;
-		if( sendall(c.conn->socket, c.response.data, &nbytes) < 0) {
-			/* got -1, error! */
-			BARK("sendall: %s\n", strerror(errno));
+		if(c.response.sendfile > 0) {
+			/* if we were instructed to send a file, use senfile(). */
+			BARK("going to sendfile()!\n");
+			nbytes = sendfile(c.conn->socket, c.response.file, 0, c.response.content_size);
+			BARK("sendfile() send %d bytes\n", nbytes);
+			if(nbytes < 0) {
+				BARK("sendfile(): %s\n", strerror(errno));
+			}
+		} else {
+			/* otherwise, send the data buffer. */
+			nbytes = c.response.content_size;
+			if( sendall(c.conn->socket, c.response.data, &nbytes) < 0) {
+				/* got -1, error! */
+				BARK("sendall: %s\n", strerror(errno));
+			}
 		}
 		out+=nbytes;
 

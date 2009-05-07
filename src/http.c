@@ -141,7 +141,6 @@ const int fulfill_request(connection *ret) {
 const int get_that_file(connection *ret) {
 	char buf[8 * KILOBYTE];
 	memset(buf, 0, sizeof(buf));
-	unsigned long bytes = 0;
 
 	/* the if statement below is for filling a file request *only* */
 
@@ -153,38 +152,22 @@ const int get_that_file(connection *ret) {
 	/* grab ze mime type from ze struct */
 	strcpy(ret->response.mimetype, get_mime_type(buf));
 	/* okay, should be good to go. open it. :) */
-	ret->response.file = fopen(buf, "r");
-	if(ret->response.file == NULL) {
-		/* yes, we have no bananas. */
+	ret->response.file = open(buf, O_RDONLY);
+	if(ret->response.file < 0) {
+		/* if open() is -1, the file couldn't be opened. */
 		ret->response.status = HTTP_NOT_FOUND;
 		error_code_to_data( &(ret->response) );
 		return -1;
 	}
 
-	/* a little trickery from cplusplus.com to get the file size */
-	fseek(ret->response.file, 0, SEEK_END);
-	ret->response.content_size = ftell (ret->response.file);
-	rewind(ret->response.file);
-	/* get us a nice fat buffer for the file */
-	ret->response.data = (char*) malloc(sizeof(char) * ret->response.content_size);
-	if(ret->response.data == NULL) {
-		/* d'oh, OOM! */
-		BARK("couldn't malloc for file");
-		ret->response.status = HTTP_INTERNAL_ERROR;
-		error_code_to_data( &(ret->response) );
-		return -1;
-	}
-	/* read the file :D */
-	bytes = fread (ret->response.data , 1, ret->response.content_size, ret->response.file);
-	/* okay, it might help if i closed the file */
-	fclose(ret->response.file);
-	if(bytes != ret->response.content_size) {
-		/* read error. :( */
-		BARK("couldn't read whole file");
-		ret->response.status = HTTP_INTERNAL_ERROR;
-		error_code_to_data( &(ret->response) );
-		   return -1;
-	}
+	/* go to the end, get the file size as well */
+	ret->response.content_size = lseek(ret->response.file, 0, SEEK_END);
+	/* go to the beginning */
+	lseek(ret->response.file, 0, SEEK_SET);
+
+	/* make sure the code later on knows we want to send a file and not the data buffer */
+	ret->response.sendfile = 0x1;
+
 	return 0;
 } /* end of get_that_file */
 
