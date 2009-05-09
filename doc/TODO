@@ -1,4 +1,4 @@
-updated [2009-04-30 16:01]
+updated [2009-05-09  9:06]
 
 *	instead of just showing the end-user what happened during an error
 	(500, 404, etc), start setting errno and use perror/strerror to
@@ -9,8 +9,10 @@ updated [2009-04-30 16:01]
 *	start adding debugging levels. 3 should be good.
 	 it will make the code messy though. :(
 
-*	make files transfers buffered, don't load the whole file into memory before sending it.
+DONE!	make files transfers buffered, don't load the whole file into memory before sending it.
 
-*	make it compile under cygwin
+*	port to windows, cygwin, *bsd
 
-*	port to windows!
+*	add keep-alive
+
+*	add Range header, for partial transfers

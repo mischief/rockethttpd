@@ -59,8 +59,11 @@ void *dispatch_request(void *arg) {
 		if(c.response.sendfile > 0) {
 			/* if we were instructed to send a file, use senfile(). */
 			nbytes = sendfile(c.conn->socket, c.response.file, 0, c.response.content_size);
-			if(nbytes < 0) {
+			if(nbytes <= 0) {
 				BARK("sendfile(): %s\n", strerror(errno));
+			}
+			if(nbytes != c.response.content_size) {
+				BARK("sendfile(): transfer size mismatch: size %zu sent %d\n", c.response.content_size, nbytes);
 			}
 			close(c.response.file);
 		} else {

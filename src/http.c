@@ -20,14 +20,14 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 	char *tok, *state;
 	char *subtok, *substate;
 
-	char crlf[] = "\r\n"; /* this is how we break the request into useable pieces. :) */
+	char crlf[] = "\r\n";
 	int line = 0;
 
 	while( (tok = strtok_r(data, crlf, &state)) != NULL ) {
 		if(line == 0) {
-			/* parse the first line into subtokens: request method, resource, http ver */
+			// parse the first line into subtokens: request method, resource, http ver
 			if( (subtok = strtok_r(tok, " ", &substate)) != NULL ) {
-				/* duplicate string to data structure */
+				// duplicate string to data structure
 				ret->req.request_method = strdup(subtok);
 				if(ret->req.request_method == NULL) {
 					ret->response.status = HTTP_INTERNAL_ERROR;
@@ -39,24 +39,21 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 
 				/* okay, so if it isn't one of those, it's invalid. good day sir.*/
 				if(ret->req.request_type == INVALID) {
-					ret->response.status = HTTP_BAD_REQUEST;
+					ret->response.status = HTTP_NOT_IMPLEMENTED;
 					error_code_to_data( &(ret->response) );
 					return -1;
 				}
 			}
-			/* so apparently for these subsequent calls to strtok_r,
-			the first param has to be null if i expect this to work right */
 
-			/* okay, now parse the HTTP resource string. */
+			// parse HTTP resource string.
 			if( (subtok = strtok_r(NULL, " ", &substate)) != NULL ) {
 				if(strlen(subtok) > FILENAME_MAX) {
-					/* alright, if you're submitting shit this big, gtfokthx. */
 					ret->response.status = HTTP_URI_TOO_LONG;
 					error_code_to_data( &(ret->response) );
 					return -1;
 				} else {
-					/* copy the resource string to the struct */
-					ret->req.resource = strdup(subtok);
+					// copy resource string
+					ret->req.resource = strndup(subtok, 7 * KILOBYTE);
 					if(ret->req.resource == NULL) {
 						ret->response.status = HTTP_INTERNAL_ERROR;
 						error_code_to_data( &(ret->response) );
@@ -67,19 +64,12 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 
 
 			if( (subtok = strtok_r(NULL, " ", &substate)) != NULL ) {
-				if(strlen(subtok) > 20) {
-					/* okay, now the idiot is sending a HTTP version that is too big for our buffer. */
-					ret->response.status = HTTP_VERSION_UNSUPPORTED;
-					error_code_to_data( &(ret->response) );
-					return -1;
-				} else {
-					strncpy(ret->req.http_ver, subtok, 20);
-				}
+				strncpy(ret->req.http_ver, subtok, 20);
 			}
 			line=1;
 		} // end if for parsing http request line
 
-		/* do header parsing here. */
+		// do header parsing here.
 
 		break;
 	} // end of while which processes the http header
@@ -87,30 +77,15 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 } // end of parse_http_request
 
 const int fulfill_request(connection *ret) {
-	http_status_code status = HTTP_OK; // eh?
-	char buf[8 * KILOBYTE] = {0};
-	char badstr[2][4] = { "../", "/" };
-
-	/* important: check if it's something bad! */
-
-	if( (strstr(buf, badstr[0]) != 0) || (strncmp(buf, badstr[1], 1) == 0) ) {
-		/* d'oh! bad! */
-		ret->response.status = HTTP_BAD_REQUEST;
-		error_code_to_data( &(ret->response) );
-		return -1;
-	}
+	http_status_code status = HTTP_OK;
 
 	/* a bit kludge-ish, fix this later */
 
 	if( strcmp( &ret->req.resource[strlen(ret->req.resource)-1], "/") == 0) {
-		/* we have a directory! */
-
-
-		/* first check for an index page */
+		// first check for an index page
 		if( exist_index(ret) ) {
 			if( get_that_file(ret) != 0 ) return -1;
 		} else {
-			/* yay! directory listings work! */
 			if( make_dir_list(ret) != 0 ) {
 				ret->response.status = HTTP_NOT_FOUND;
 				error_code_to_data( &(ret->response) );
@@ -119,22 +94,18 @@ const int fulfill_request(connection *ret) {
 		}
 
 	} else {
-		/* we haz a file request. */
+		// nope, file request.
 		if( get_that_file(ret) != 0 ) return -1;
 	}
 
-	/* okay, content is dealt with. now make a correct header to send back */
-	sprintf(buf, reply_header, http_code_to_str(status), ret->response.mimetype, ret->response.content_size, PROGRAM " " VERSION);
-	ret->response.header_size = strlen(buf);
-	/* copy the buffer to the header output */
-	ret->response.header = strdup(buf);
-	if(ret->response.header == NULL) {
+	// create a header
+	ret->response.header_size = asprintf(&ret->response.header, reply_header, http_code_to_str(status), ret->response.mimetype, ret->response.content_size, PROGRAM " " VERSION);
+	if(ret->response.header_size <= 0 ) {
 		ret->response.status = HTTP_INTERNAL_ERROR;
 		error_code_to_data( &(ret->response) );
 		return -1;
 	}
 
-	/* done, now all the data should be sent off. :) */
 	return 0;
 } // end of fulfill_request
 
@@ -142,19 +113,14 @@ const int get_that_file(connection *ret) {
 	char buf[8 * KILOBYTE];
 	memset(buf, 0, sizeof(buf));
 
-	/* the if statement below is for filling a file request *only* */
-
-	/* okay, this needs to change later. but this works for now. */
-	/* strip the beginning / off the url by reading request+1 */
-	/* urldecode the request into the temp buffer */
+	// strip beginning / off
 	url_decode(buf, ret->req.resource+1);
 
-	/* grab ze mime type from ze struct */
+	// get mime type
 	strcpy(ret->response.mimetype, get_mime_type(buf));
-	/* okay, should be good to go. open it. :) */
+
 	ret->response.file = open(buf, O_RDONLY);
 	if(ret->response.file < 0) {
-		/* if open() is -1, the file couldn't be opened. */
 		ret->response.status = HTTP_NOT_FOUND;
 		error_code_to_data( &(ret->response) );
 		return -1;
@@ -172,26 +138,22 @@ const int get_that_file(connection *ret) {
 } /* end of get_that_file */
 
 void connection_destroy(connection *p) {
-	/*	make sure to call this when we're done with the structure!	*/
-	/*	here is where we deal with de-allocating that memory we got	*/
+	/*	make sure to call this when we're done with the structure!
+	 * the purpose of this function is to deallocate any memory
+	 * we have allocated but not freed. */
 
-	/* first the request bits */
+	// first the request
 	if(p->req.request_method != NULL)
 		free(p->req.request_method);
-
 	if(p->req.resource != NULL)
 		free(p->req.resource);
 
-	/* now the reply bits */
+	// now the reply bits
 	if(p->response.header != NULL)
 		free(p->response.header);
 	if(p->response.data != NULL)
 		free(p->response.data);
 
-	/* now the connection part */
-	memset(p->conn, 0, sizeof(connection_data));
+	// now the connection
 	free(p->conn);
-
-	/* hit the big red button */
-	memset(p, 0, sizeof(connection));
 }

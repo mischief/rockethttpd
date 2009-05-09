@@ -9,14 +9,14 @@ static const char *dir_page =
 "  <style type='text/css'>\n"
 "/*<![CDATA[*/\n"
 "  body { background:#F; }\n"
-"  #content { border:#000000 2px solid; margin:5em auto 10px auto; font-family:Georgia, Times, serifs; width:560px; padding: 30px 50px; }\n"
+"  #content { border:2px solid #000000; margin:5em auto 10px auto; font-family:Georgia, Times, serifs; width:600px; padding: 30px 50px; }\n"
 "  #top { font-weight:bold; padding: 7px 0; }\n"
 "  div.ico { width:16px; height:16px; float:left; }\n"
-"  div.filename { width:270px; float:left; text-align:left; margin-left:10px; }\n"
+"  div.filename { width:300px; float:left; text-align:left; margin-left:10px; }\n"
 "  div.modified { width:150px; float:left; text-align:left; }\n"
 "  div.size { width:80px; float:right; text-align:right; }\n"
 "  .clear { clear:both; }\n"
-"  .bar { border-top:#000000 1px solid; margin-bottom:5px; clear:both; }\n"
+"  .bar { border-top:#000000 2px solid; margin-bottom:5px; clear:both; }\n"
 /* arrow */
 "  .arrow { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAVElEQVR42qWT0QoAIAgD9/8fbYEQSGLONrC3O1IRZraUgj/AV0kC6QdSC9IMInhCC6pQgipUC12eAialgImzbhn03K5xAidB3G8HJsENj64xwtNz3iu3wU8Fir11AAAAAElFTkSuQmCC); }\n"
 /* texts */
@@ -46,10 +46,12 @@ static const char *dir_page =
 "/*]]>*/\n"
 "  </style>\n"
 "  <meta http-equiv='Content-Type' content='application/xhtml+xml' />\n\n"
-"  <title>Index of %s</title>\n" /* directory we are indexing */
+/* directory we are indexing */
+"  <title>Index of %s</title>\n"
 "</head>\n\n"
 "<body>\n"
 "	<div id='content'>\n"
+/* directory we are indexing */
 "		<h2>Index of %s</h2>\n"
 "		<div id='top'>\n"
 "			<div class='ico'></div>\n"
@@ -58,7 +60,8 @@ static const char *dir_page =
 "			<div class='size'>Size</div>\n"
 "		</div>\n"
 "		<div class='bar'></div>\n\n"
-"%s" /* dir_entry listing goes here */
+/* dir_entry listing goes here */
+"%s"
 "	</div>\n"
 "</body>\n"
 "</html>\n";
@@ -96,15 +99,14 @@ static const struct {
 };
 
 const int make_dir_list(connection *ret) {
-	char buf[1 * KILOBYTE] = {0};
+	char buf[8 * KILOBYTE] = {0};
 	struct stat stattmp;
 	struct dirent **filelist;
 	int filecount = 0;
-	char dir[1 * KILOBYTE] = {0};
+	char dir[8 * KILOBYTE] = {0};
 	char **entries = 0;
 
 	/* FIX THIS LATER */
-	unsigned long entrybuflen;
 	char *filenamebuf;
 	char iconbuf[10] = {0};
 	char timestampbuf[256] = {0};
@@ -129,56 +131,47 @@ const int make_dir_list(connection *ret) {
 	 * 8. put those in dir_page
 	 * 9. return all that shit */
 
-	/* 1. */
-	/* put ./ into dir, so that we are always dealing with files relative to ./ */
+	// always start relative
 	strcpy(dir, "./");
-	/* decode URL */
 	url_decode(buf, ret->req.resource+1);
-	/* put the decoded url onto the end of ./ */
 	strcat(dir, buf);
 
-	/* this if statement is to filter out ".." if we are in / */
+	// filter out ".." if we are in /
 	if( strncmp(dir, "./", 3) ) {
-		filecount = scandir(dir, &filelist, yesparent, alphasort);
+		filecount = scandir(dir, &filelist, yesparent, versionsort);
 	} else {
-		filecount = scandir(dir, &filelist, noparent, alphasort);
+		filecount = scandir(dir, &filelist, noparent, versionsort);
 	}
 
 	if(filecount >= 0) {
-		/* something was found */
 		int cnt;
-		entries = (char **) malloc(filecount * sizeof(char *));
+		entries = malloc(filecount * sizeof(*entries));
 		memset(entries, 0, sizeof(entries));
 
 		for(cnt = 0; cnt < filecount; ++cnt) {
 			char statbuf[1024];
 			strcpy(statbuf, dir);
 			strcat(statbuf, filelist[cnt]->d_name);
-
-			/* 2. stat da file */
 			stat(statbuf, &stattmp);
 
-			/* 3. dupe the filename */
+			// get file name
 			filenamebuf = strdup(filelist[cnt]->d_name);
 			filenamebuf = realloc(filenamebuf, strlen(filenamebuf) + 5);
 
-			/* 4. gimme an icon. */
 			if( S_ISREG(stattmp.st_mode) ) {
 				strcpy(iconbuf, icon_from_fname(filenamebuf) );
-				/* change it into a proper binary suffix */
+				// set proper suffix
 				suffix = get_suffx_from_size(stattmp.st_size, &bytes);
 				if(bytes==floor(bytes)) {
 					sprintf(sizebuf, "%.0f", bytes);
 				} else {
 					sprintf(sizebuf, "%.1f", bytes);
 				}
-				//BARK("regular file '%s'\n", filenamebuf);
 			} else if(S_ISDIR(stattmp.st_mode)) {
 				strcpy(iconbuf, "folder");
 				strcpy(sizebuf, "-");
 				strcat(filenamebuf, "/");
 				suffix = "";
-				//BARK("directory '%s'\n", filenamebuf);
 			} else {
 				/* isn't a regular file or folder... wtf is it? */
 				strcpy(iconbuf, "file");
@@ -190,19 +183,12 @@ const int make_dir_list(connection *ret) {
 			strftime(timestampbuf, 256, timestr, &timetmp);
 
 			/* 7. put in buffer, order = icon, filename, time modified, size */
-			/* find out the total size of our string, plus some extra room */
-			//entrybuflen = 50 + strlen(dir_entry) + strlen(iconbuf) + strlen(filenamebuf) + strlen(timestampbuf) + strlen(sizebuf);
-			//entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
 			/* put all the directory data into the div tags */
 			int len;
 			if( strcmp(filenamebuf, "../") == 0) {
-				entrybuflen = 10 + strlen(dir_entry) + strlen("arrow") + strlen(filenamebuf) + strlen("Parent Directory") + strlen(sizebuf);
-				entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
-				len = sprintf(entries[cnt], dir_entry, "arrow", filenamebuf, "Parent Directory", "", sizebuf, "");
+				len = asprintf(&entries[cnt], dir_entry, "arrow", filenamebuf, "Parent Directory", "", sizebuf, "");
 			} else {
-				entrybuflen = 10 + strlen(dir_entry) + strlen(iconbuf) + (strlen(filenamebuf)*2) + strlen(timestampbuf) + strlen(sizebuf);
-				entries[cnt] = (char *) malloc(entrybuflen * sizeof(char));
-				len = sprintf(entries[cnt], dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, sizebuf, suffix);
+				len = asprintf(&entries[cnt], dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, sizebuf, suffix);
 			}
 			entrieslen += len + 1;
 
@@ -212,7 +198,7 @@ const int make_dir_list(connection *ret) {
 
 		}
 
-		char *entriestotal = (char *) malloc(entrieslen * sizeof(char));
+		char *entriestotal = malloc(entrieslen * sizeof(*entriestotal));
 		/* danke BhaaL */
 		memset(entriestotal, 0, entrieslen);
 
@@ -223,21 +209,17 @@ const int make_dir_list(connection *ret) {
 		free(entries);
 		free(filelist);
 
-		/* now add entries to the template */
-		int len = strlen(dir_page) + strlen(dir) + strlen(entriestotal);
-		ret->response.data = (char *) malloc(len * (10 + sizeof(char)));
-
-		if(ret->response.data == NULL) {
-			/* d'oh, OOM! */
-			BARK("malloc failed\n");
+		ret->response.content_size = asprintf(&ret->response.data, dir_page, dir+1, dir+1, entriestotal);
+		if(ret->response.content_size <= 0) {
+			/* asprintf went bad */
+			BARK("asprintf(): %s\n", strerror(errno));
 			ret->response.status = HTTP_INTERNAL_ERROR;
 			error_code_to_data( &(ret->response) );
 			return -1;
 		}
 
-		ret->response.content_size = sprintf(ret->response.data, dir_page, dir+1, dir+1, entriestotal);
-
 		free(entriestotal);
+
 		/* our directory listings are XHTML 1.0 Strict compliant, damnit :(
 		* sigh, send as text/html to compensate for IE and other crap browsers..
 		* even though that isn't ideal and is read as tag soup.. */
@@ -251,14 +233,13 @@ const int make_dir_list(connection *ret) {
 		return -1;
 	}
 
-	/* error if we get here? */
+	// something odd happened
 	return -1;
 }
 
 const char *icon_from_fname(const char *filename) {
 	int i, len_ico, len = strlen(filename);
 
-	/* search for the file extension in the struct */
 	for(i=0;icons[i].ext != 0;i++) {
 		len_ico = strlen(icons[i].ext);
 		if( strncmp(&filename[len-len_ico], icons[i].ext, len_ico) == 0) {
@@ -266,7 +247,7 @@ const char *icon_from_fname(const char *filename) {
 		}
 	}
 
-	/* no icon. send a blank one. */
+	// no icon. send a blank one.
 	return "file";
 }
 
@@ -324,9 +305,9 @@ int exist_index(connection *ret) {
 		}
 
 		closedir (dp);
+	} else {
+		BARK("failed reading directory %s\n", dir);
 	}
-	else
-	BARK("failed reading directory %s\n", dir);
 
 	return 0;
 }

@@ -1,0 +1,10 @@
+To build normally, issue the 'make' command.
+
+To build an executeable with debugging symbols (-g),
+use 'make debug'.
+
+To build an executeable for use with gprof,
+use 'make gprof'.
+
+after using 'make debug' or 'make gprof', it is
+recommended to 'make clean' before using a different target.

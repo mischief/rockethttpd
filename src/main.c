@@ -20,55 +20,50 @@
 #include "common_types.h"
 #include "networking.h"
 
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <winsock.h>
-#include <ws2tcpip.h>
-#pragma comment(lib, "ws2_32")
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <signal.h>
 
 /* networking headers */
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
-#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
 /* threading header */
 #include <pthread.h>
 
+static int plzdie = 0;
+
 void usage(char *prog) {
 	printf(	"[-] usage:\n"
-		"[-]	%s [port] [webroot]\n"
-		"[-]	%s -?		this help\n", prog, prog);
+			"[-] %s [port] [webroot]\n"
+			"[-] %s -?\n", prog, prog);
 	exit(1);
+}
+
+void exiting() {
+	//printf("[-] you are on the path to destruction.\n");
+}
+
+void die (int sig) {
+	//printf("[-] signal %d: somebody set us up the bomb.\n", sig);
+	printf("[-] interrupted by SIGINT, quitting.\n");
+	++plzdie;
 }
 
 int main(int argc, char **argv) {
 	printf("[+] %s built on %s %s\n", VERSTRING, __DATE__, __TIME__);
 
-/* this #ifdef block is to set up windows-only socket related matter,
- * and registering WSACleanup() with atexit() so what we know it is
- * called when any call to exit() is made. */
-
-#ifdef WIN32
-	WSADATA wsadat;
-	WSAStartup(MAKEWORD(2,2),&wsadat);
-	if( !atexit(WSACleanup()) ) {
-		BARK("Registering WSACleanup() with atexit() failed\n");
-		return EXIT_FAILURE;
-	}
-#endif
-
-	/* maybe implement daemon(0, 0); system call later */
+	atexit(exiting);
+	signal(SIGPIPE, SIG_IGN);
+	signal(SIGINT, die);
+	siginterrupt(SIGINT, 1);
 
 	if( argc != 3 || !strcmp(argv[1], "-?") ) {
 		/* doesn't return */
@@ -119,8 +114,7 @@ int main(int argc, char **argv) {
 		}
 
 		/*	this turns SO_REUSEADDR on. what this does is allow the
-			program to re-use the socket even if it is closed unexpectedly.
-		*/
+		 * program to re-use the socket even if it is closed unexpectedly. */
 		if (setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
 			BARK("setsockopt(): %s\n", strerror(errno));
 			exit(1);
@@ -153,12 +147,16 @@ int main(int argc, char **argv) {
 
 	/* set up our threading details */
 
+	size_t stacksize = 204800;
 	pthread_attr_t attr;
 	/* initialize and set thread detached attribute */
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	pthread_attr_setstacksize(&attr, stacksize);
 
 	pthread_t client_thr;
+
+	int cork_on = 500, sockopterr;
 
 	/* now set up the listening socket */
 
@@ -170,7 +168,8 @@ int main(int argc, char **argv) {
 	printf("[+] %s: waiting for connections on %s:%s\n", PROGRAM, servip, port);
 
 	/* main server loop */
-	while(1) {
+
+	while(!plzdie) {
 		sockfd x;
 		struct sockaddr_storage client;
 		socklen_t client_socksize;
@@ -178,31 +177,40 @@ int main(int argc, char **argv) {
 
 		x = accept(serv_sock, (struct sockaddr *)&client, &client_socksize);
 
-		connection_data *p = (connection_data *) malloc( sizeof(connection_data));
-		memset(p, 0, sizeof(connection_data));
-		/* where we store our client stuff, free() it inside the thread we pass it to */
+		if(x > -1) {
 
-		p->socket = x;
-		memcpy(&p->client, &client, client_socksize);
-		p->client_socksize = client_socksize;
-		strcpy(p->port, port);
-		strcpy(p->serverip, servip);
+			sockopterr = setsockopt(x, IPPROTO_TCP, TCP_CORK, &cork_on, sizeof(cork_on));
+			if(sockopterr < 0)
+				BARK("setsockopt(): %s\n", strerror(errno));
 
-		if (p->socket == -1) {
-			free(p);
-			BARK("accept(): %s\n", strerror(errno));
-		} else {
+			connection_data *p = malloc(sizeof(*p));
+			memset(p, 0, sizeof(connection_data));
+
+			/* where we store our client stuff, free() it inside the thread we pass it to */
+			p->socket = x;
+			memcpy(&p->client, &client, client_socksize);
+			p->client_socksize = client_socksize;
+			strcpy(p->port, port);
+			strcpy(p->serverip, servip);
+
 			/* do the real bsns */
 			if(pthread_create(&client_thr, &attr, dispatch_request, (void *) p) != 0) {
 				/* couldn't create a thread :( */
 				free(p);
+				close(x);
 				BARK("pthread_create(): %s\n", strerror(errno));
 			}
+
+		} else {
+			if(errno != EINTR)
+			BARK("accept(): %s\n", strerror(errno));
 		}
 
 		/* flush all streams. */
 		fflush(NULL);
 	}
 
-	return EXIT_SUCCESS;
+	close(serv_sock);
+
+	exit(0);
 }
