@@ -2,7 +2,7 @@
 #define DEFS_H
 
 #define PROGRAM	"Rocket HTTPD"
-#define VERSION	"v0.1.7"
+#define VERSION	"v0.1.8"
 #define AUTHOR	"mischief"
 #define EMAIL	"<this.is.srs.bsns@gmail.com>"
 #define SOURCE	"http://code.google.com/p/rockethttpd/"

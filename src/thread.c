@@ -1,5 +1,8 @@
 #include "thread.h"
 
+/* rfc 822 conformant */
+static const char *timefmt = "%a, %d %b %Y %T %z";
+
 void *dispatch_request(void *arg) {
 	connection c;
 	memset(&c, 0, sizeof(connection));
@@ -14,7 +17,7 @@ void *dispatch_request(void *arg) {
 		BARK("getnameinfo(): %s\n", gai_strerror(rv));
 	}
 
-	print_con_dat(c.conn); printf("connection established\n");
+	/* print_con_dat(c.conn); printf("connection established\n"); */
 
 	int in = 0,	/* bytes in */
 	out = 0,	/* bytes out */
@@ -36,7 +39,7 @@ void *dispatch_request(void *arg) {
 
 		parse_http_request(buf, in, &c);
 
-		print_con_dat(c.conn); printf("recieved http request: %s %s %s\n", c.req.request_method, c.req.resource, c.req.http_ver);
+		/* print_con_dat(c.conn); printf("recieved http request: %s %s %s\n", c.req.request_method, c.req.resource, c.req.http_ver); */
 
 		/* check if the connection is okay, if not,
 		 * error data is already taken care of and
@@ -46,7 +49,9 @@ void *dispatch_request(void *arg) {
 				/* if something does go bad it will probably show up here */
 			}
 		}
-		print_con_dat(c.conn); printf("sending response '%s'\n", http_code_to_str(c.response.status) );
+
+		/* print_con_dat(c.conn); printf("sending response '%s'\n", http_code_to_str(c.response.status) ); */
+
 		/* send the header first*/
 		nbytes = c.response.header_size;
 		if( sendall(c.conn->socket, c.response.header, &nbytes) < 0) {
@@ -78,8 +83,16 @@ void *dispatch_request(void *arg) {
 
 	}
 
-	print_con_dat(c.conn); printf("received %d bytes. sent %d bytes.\n", in, out);
+	/* get the current time */
+	time_t sec;
+	struct tm now;
+	sec = time(NULL);
+	strftime(buf, sizeof(buf), timefmt, localtime_r(&sec, &now));
 
+	/* print out connection summary */
+	printf("[%c] %s [%s] \"%s\" %d %dB\n", c.response.status == 200 ? '+' : '-', c.conn->clientip, buf, c.req.resource, c.response.status, nbytes);
+
+	fflush(NULL);
 	/* clean up! */
 	close(c.conn->socket);
 	connection_destroy(&c);

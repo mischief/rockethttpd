@@ -8,7 +8,7 @@ static const char *dir_page =
 /* css */
 "  <style type='text/css'>\n"
 "/*<![CDATA[*/\n"
-"  body { background:#F; }\n"
+"  body { background-color: white; }\n"
 "  #content { border:2px solid #000000; margin:5em auto 10px auto; font-family:Georgia, Times, serifs; width:600px; padding: 30px 50px; }\n"
 "  #top { font-weight:bold; padding: 7px 0; }\n"
 "  div.ico { width:16px; height:16px; float:left; }\n"
@@ -52,7 +52,9 @@ static const char *dir_page =
 "<body>\n"
 "	<div id='content'>\n"
 /* directory we are indexing */
-"		<h2>Index of %s</h2>\n"
+"		<h2 style='float: left'>Index of %s</h2>\n"
+"       <span style='font-style: italic; float:right'>" PROGRAM " " VERSION "</span>\n"
+"       <div class='clear'></div>\n"
 "		<div id='top'>\n"
 "			<div class='ico'></div>\n"
 "			<div class='filename'>Filename</div>\n"

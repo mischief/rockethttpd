@@ -206,8 +206,6 @@ int main(int argc, char **argv) {
 			BARK("accept(): %s\n", strerror(errno));
 		}
 
-		/* flush all streams. */
-		fflush(NULL);
 	}
 
 	close(serv_sock);
