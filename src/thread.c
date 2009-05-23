@@ -14,7 +14,7 @@ void *dispatch_request(void *arg) {
 	int rv = getnameinfo((struct sockaddr *) &(c.conn->client), c.conn->client_socksize, c.conn->clientip,
 		sizeof(c.conn->clientip), c.conn->clientport, sizeof(c.conn->clientport), NI_NUMERICHOST | NI_NUMERICSERV);
 	if ( rv != 0) {
-		BARK("getnameinfo(): %s\n", gai_strerror(rv));
+		ERROR("getnameinfo(): %s\n", gai_strerror(rv));
 	}
 
 	/* print_con_dat(c.conn); printf("connection established\n"); */
@@ -31,7 +31,7 @@ void *dispatch_request(void *arg) {
 			/* connection closed, what to do? */
 		} else {
 			/* -1, we have a problem :( */
-			BARK("recv(): %s\n", strerror(errno));
+			ERROR("recv(): %s\n", strerror(errno));
 		}
 	} else {
 		/* okay, got some data! figure out what the hell it was. */
@@ -56,7 +56,7 @@ void *dispatch_request(void *arg) {
 		nbytes = c.response.header_size;
 		if( sendall(c.conn->socket, c.response.header, &nbytes) < 0) {
 			/* got -1, error! */
-			BARK("sendall(): %s\n", strerror(errno));
+			ERROR("sendall(): %s\n", strerror(errno));
 		}
 		out+=nbytes;
 
@@ -65,10 +65,10 @@ void *dispatch_request(void *arg) {
 			/* if we were instructed to send a file, use senfile(). */
 			nbytes = sendfile(c.conn->socket, c.response.file, 0, c.response.content_size);
 			if(nbytes <= 0) {
-				BARK("sendfile(): %s\n", strerror(errno));
+				ERROR("sendfile(): %s\n", strerror(errno));
 			}
 			if(nbytes != c.response.content_size) {
-				BARK("sendfile(): transfer size mismatch: size %zu sent %d\n", c.response.content_size, nbytes);
+				ERROR("sendfile(): transfer size mismatch: size %zu sent %d\n", c.response.content_size, nbytes);
 			}
 			close(c.response.file);
 		} else {
@@ -76,7 +76,7 @@ void *dispatch_request(void *arg) {
 			nbytes = c.response.content_size;
 			if( sendall(c.conn->socket, c.response.data, &nbytes) < 0) {
 				/* got -1, error! */
-				BARK("sendall: %s\n", strerror(errno));
+				ERROR("sendall: %s\n", strerror(errno));
 			}
 		}
 		out+=nbytes;
@@ -90,7 +90,7 @@ void *dispatch_request(void *arg) {
 	strftime(buf, sizeof(buf), timefmt, localtime_r(&sec, &now));
 
 	/* print out connection summary */
-	printf("[%c] %s [%s] \"%s\" %d %dB\n", c.response.status == 200 ? '+' : '-', c.conn->clientip, buf, c.req.resource, c.response.status, nbytes);
+	printf("[%c] %s [%s] %d %dB \"%s\"\n", c.response.status == 200 ? 'o' : '~', c.conn->clientip, buf, c.response.status, nbytes, c.req.resource);
 
 	fflush(NULL);
 	/* clean up! */

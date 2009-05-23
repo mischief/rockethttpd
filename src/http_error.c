@@ -28,7 +28,7 @@ void error_code_to_data(http_data_out *out) {
 			fill_error_template(buf, out, code, "505 HTTP Version Not Supported", "The server does not support the HTTP version requested.");
 			break;
 		case HTTP_OK:
-			// we shouldn't even get here...
+			/* we shouldn't even get here... */
 			break;
 		default:
 			break;

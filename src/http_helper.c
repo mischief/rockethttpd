@@ -5,12 +5,12 @@ static const struct {
 	http_request_type type;
 } methods[] = {
 	{ "GET", GET },
-	//{ "POST", POST },
-	//{ "HEAD", HEAD },
+	/*{ "POST", POST }, */
+	/*{ "HEAD", HEAD }, */
 	{0, INVALID }
 };
 
-// default content-type
+/* default content-type */
 static const char *fallback_mime = "application/octet-stream";
 
 /* array of mime-type structs, see common_types.h */
@@ -66,7 +66,7 @@ const http_request_type get_request_type(const char *str) {
 const char *get_mime_type(const char *resource) {
 	int i, len_mime, len = strlen(resource);
 
-	// find a suitable content-type
+	/* find a suitable content-type */
 	for(i=0;mime_types[i].ext != 0;i++) {
 		len_mime = strlen(mime_types[i].ext);
 		if( strncmp(&resource[len-len_mime], mime_types[i].ext, len_mime) == 0) {
@@ -74,13 +74,13 @@ const char *get_mime_type(const char *resource) {
 		}
 	}
 
-	// send default content-type
+	/* send default content-type */
 	return fallback_mime;
 }
 
 void url_decode(char *dest, const char *src) {
-	/*	assume that dest is at least as large as src.
-		if the guy on the other end can't do at least that. plzdie. */
+	/* assume that dest is at least as large as src.
+	 * if the guy on the other end can't do at least that. plzdie. */
 	const char *p = src;
 	char code[3] = {0};
 	unsigned long ascii = 0;
@@ -97,7 +97,7 @@ void url_decode(char *dest, const char *src) {
 			*dest++ = *p++;
 		}
 	}
-	// set the end to \0
+	/* set the end to \0 */
 	dest = 0;
 }
 

@@ -16,8 +16,8 @@ typedef enum {
 	GET = 500,
 	POST,
 	HEAD,
-
-	INVALID = 666 // represends a bad request type
+/* represends a bad request type */
+	INVALID = 666
 } http_request_type;
 
 typedef enum {

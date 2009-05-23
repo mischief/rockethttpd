@@ -214,7 +214,7 @@ const int make_dir_list(connection *ret) {
 		ret->response.content_size = asprintf(&ret->response.data, dir_page, dir+1, dir+1, entriestotal);
 		if(ret->response.content_size <= 0) {
 			/* asprintf went bad */
-			BARK("asprintf(): %s\n", strerror(errno));
+			ERROR("asprintf(): %s\n", strerror(errno));
 			ret->response.status = HTTP_INTERNAL_ERROR;
 			error_code_to_data( &(ret->response) );
 			return -1;
@@ -229,7 +229,7 @@ const int make_dir_list(connection *ret) {
 
 		return 0;
 	} else {
-		BARK("scandir failed: %s\n", strerror(errno));
+		ERROR("scandir failed: %s\n", strerror(errno));
 		ret->response.status = HTTP_NOT_FOUND;
 		error_code_to_data( &(ret->response) );
 		return -1;
@@ -308,7 +308,7 @@ int exist_index(connection *ret) {
 
 		closedir (dp);
 	} else {
-		BARK("failed reading directory %s\n", dir);
+		ERROR("failed reading directory %s\n", dir);
 	}
 
 	return 0;

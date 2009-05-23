@@ -8,12 +8,21 @@
 #define SOURCE	"http://code.google.com/p/rockethttpd/"
 #define VERSTRING PROGRAM " " VERSION " by " AUTHOR " " EMAIL " " SOURCE
 
-// set DEBUG in Makefile
-// #define DEBUG 0
+#define UNIX_NAME "rockethttpd"
 
-#define BARK(fmt, ...) if(DEBUG) printf("[-] file \"%s\", line %d: " fmt, __FILE__, __LINE__, ##__VA_ARGS__); fflush(NULL)
+#include <assert.h>
 
-// listen() queue
+#if DEBUG
+#define ERROR(fmt, ...) fprintf(stderr, "[e] '%s' %d: error: " fmt, __FILE__, __LINE__, ##__VA_ARGS__); fflush(NULL)
+#else
+#define ERROR(...)
+#endif
+
+#define FATAL(fmt, ...) fprintf(stderr, "[f] '%s' %d: fatal: " fmt, __FILE__, __LINE__, ##__VA_ARGS__); fflush(NULL)
+
+#define INFO(fmt, ...) fprintf(stdout, "[i] " fmt, ##__VA_ARGS__); fflush(NULL)
+
+/* listen() queue */
 #define BACKLOG 50
 
 #endif

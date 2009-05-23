@@ -12,9 +12,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-// this is a pointer to the data recieved from the client.
-// the length of the data recieved from the client.
-// this is a pointer to the memory that will store our data.
+/* this is a pointer to the data recieved from the client.
+ * the length of the data recieved from the client.
+ * this is a pointer to the memory that will store our data. */
 const int parse_http_request(char *, const size_t, connection *);
 
 /*	this is a big guy.
