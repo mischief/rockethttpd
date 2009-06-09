@@ -5,7 +5,6 @@ static const char *timefmt = "%a, %d %b %Y %T %z";
 
 void *dispatch_request(void *arg) {
 	connection c;
-	memset(&c, 0, sizeof(connection));
 
 	/* our 'connection' needs to know who we are connected to */
 	c.conn = (connection_data *) arg;
@@ -55,7 +54,6 @@ void *dispatch_request(void *arg) {
 		/* send the header first*/
 		nbytes = c.response.header_size;
 		if( sendall(c.conn->socket, c.response.header, &nbytes) < 0) {
-			/* got -1, error! */
 			ERROR("sendall(): %s\n", strerror(errno));
 		}
 		out+=nbytes;
@@ -68,14 +66,13 @@ void *dispatch_request(void *arg) {
 				ERROR("sendfile(): %s\n", strerror(errno));
 			}
 			if(nbytes != c.response.content_size) {
-				ERROR("sendfile(): transfer size mismatch: size %zu sent %d\n", c.response.content_size, nbytes);
+				ERROR("sendfile(): transfer size mismatch: size %zu - sent %d\n", c.response.content_size, nbytes);
 			}
 			close(c.response.file);
 		} else {
 			/* otherwise, send the data buffer. */
 			nbytes = c.response.content_size;
 			if( sendall(c.conn->socket, c.response.data, &nbytes) < 0) {
-				/* got -1, error! */
 				ERROR("sendall: %s\n", strerror(errno));
 			}
 		}

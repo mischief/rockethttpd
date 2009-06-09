@@ -24,6 +24,7 @@ static int plzdie = 0;
 void usage(char *prog);
 void exiting();
 void die (int sig);
+void mainloop();
 
 int main(int argc, char **argv) {
 	INFO("%s built on %s %s\n", VERSTRING, __DATE__, __TIME__);
@@ -53,7 +54,7 @@ int main(int argc, char **argv) {
 				if (strlen(argv[i]) < sizeof(files[0]) ) strcpy(configfile, argv[i]);
 			} else {
 				FATAL("no config file specified\n");
-				exit(1);
+				return 1;
 			}
 
 		} else {
@@ -73,7 +74,7 @@ int main(int argc, char **argv) {
 		{ "BINDADDR", &bindaddr, INET6_ADDRSTRLEN, 's' },
 		{ "WWWROOT", &root, PATH_MAX, 's' },
 		{ "PIDFILE", &pidfile, FILENAME_MAX, 's' },
-		{ "CONCURRENCY", &threadcount, 0, 'z' },
+		{ "THREADS", &threadcount, 0, 'z' },
 		{0}
 	};
 
@@ -83,7 +84,7 @@ int main(int argc, char **argv) {
 		} else {
 			ERROR("could not parse config file '%s'\n", configfile);
 			FATAL("could not parse any config files. aborting.\n");
-			exit(1);
+			return 1;
 		}
 	} else {
 
@@ -98,7 +99,7 @@ int main(int argc, char **argv) {
 			/* if we have processed all the files ... */
 			if(i == sizeof(files)/sizeof(files[0]) ) {
 				FATAL("could not parse any config files. aborting.\n");
-				exit(1);
+				return 1;
 			}
 		}
 	}
@@ -128,54 +129,48 @@ int main(int argc, char **argv) {
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
-	rv = getaddrinfo(NULL, port, &hints, &servinfo);
-	if (rv != 0) {
+	/* set up our listening socket */
+	if (getaddrinfo(NULL, port, &hints, &servinfo) != 0) {
 		FATAL("getaddrinfo(): %s\n", gai_strerror(rv));
 		return 1;
 	}
 
-	struct addrinfo *addr;
-	for(addr = servinfo; addr != NULL; addr = addr->ai_next) {
-		// fetch ourselves a socket file descriptor.
-		if ((serv_sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol)) == -1) {
-			ERROR("socket(): %s\n", strerror(errno));
-			continue;
-		}
-
-		/*	this turns SO_REUSEADDR on. what this does is allow the
-		 * program to re-use the socket even if it is closed unexpectedly. */
-		if (setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
-			FATAL("setsockopt(): %s\n", strerror(errno));
-			exit(1);
-		}
-
-		if (bind(serv_sock, addr->ai_addr, addr->ai_addrlen) == -1) {
-			close(serv_sock);
-			ERROR("bind(): %s\n", strerror(errno));
-			continue;
-		}
-		/* if everything succeeded, we have an address
-		 * break and continue */
-		break;
-
+	serv_sock = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
+	if (serv_sock == -1) {
+		ERROR("socket(): %s\n", strerror(errno));
+		return 1;
 	}
 
-	if (addr == NULL) {
-		FATAL("failed to bind\n");
-		return EXIT_FAILURE;
+	/*	this turns SO_REUSEADDR on. what this does is allow the
+	 * program to re-use the socket even if it is closed unexpectedly. */
+	if (setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+		freeaddrinfo(servinfo);
+		close(serv_sock);
+		FATAL("setsockopt(): %s\n", strerror(errno));
+		return 1;
 	}
+
+	if (bind(serv_sock, servinfo->ai_addr, servinfo->ai_addrlen) == -1) {
+		freeaddrinfo(servinfo);
+		close(serv_sock);
+		ERROR("bind(): %s\n", strerror(errno));
+		return 1;
+	}
+
 
 	/* figure out who we are */
-	rv = getnameinfo(addr->ai_addr, addr->ai_addrlen, servip, sizeof(servip), servport, sizeof(servport), NI_NUMERICHOST | NI_NUMERICSERV);
+	rv = getnameinfo(servinfo->ai_addr, servinfo->ai_addrlen, servip, sizeof(servip), servport, sizeof(servport), NI_NUMERICHOST | NI_NUMERICSERV);
 	if (rv != 0) {
+		freeaddrinfo(servinfo);
+		close(serv_sock);
 		FATAL("getnameinfo(): %s\n", gai_strerror(rv));
-		return EXIT_FAILURE;
+		return 1;
 	}
 
 	/* all done with this structure */
 	freeaddrinfo(servinfo);
 
-	/* set up our threading details */
+	/* set up threading */
 
 	size_t stacksize = 204800;
 	pthread_attr_t attr;
@@ -186,7 +181,7 @@ int main(int argc, char **argv) {
 
 	pthread_t client_thr;
 
-	int cork_on = 500, sockopterr;
+	int cork_on = 1, sockopterr;
 
 	/* now set up the listening socket */
 
@@ -214,7 +209,6 @@ int main(int argc, char **argv) {
 				ERROR("setsockopt(): %s\n", strerror(errno));
 
 			connection_data *p = malloc(sizeof(*p));
-			memset(p, 0, sizeof(connection_data));
 
 			/* where we store our client stuff, free() it inside the thread we pass it to */
 			p->socket = x;
@@ -229,33 +223,40 @@ int main(int argc, char **argv) {
 				free(p);
 				close(x);
 				ERROR("pthread_create(): %s\n", strerror(errno));
+				return 1;
 			}
 
-		} else {
-			if(errno != EINTR)
+		} else if(errno != EINTR) {
 			ERROR("accept(): %s\n", strerror(errno));
 		}
-
 	}
 
 	close(serv_sock);
 
-	exit(0);
+	return 0;
 	/* end of main */
 }
 
 void usage(char *prog) {
-	printf(	"[-] usage:\n"
-			"[-] %s [port] [webroot]\n"
-			"[-] %s -?\n", prog, prog);
+	INFO("usage:\n");
+	INFO("\t%s [options] action\n", prog);
+
+	INFO("options:\n");
+	INFO("\t-h          --help          show this help and exit\n");
+	INFO("\t-c file   --config file     read configuration from 'file'\n");
+
+    INFO("actions:\n");
+    INFO("\tstart                       start httpd\n");
+    INFO("\tshutdown                    shutdown httpd\n");
+    INFO("\n");
 }
 
 void exiting() {
-	//printf("[-] you are on the path to destruction.\n");
+	/* you are on the path to destruction. */
 }
 
 void die (int sig) {
-	//printf("[-] signal %d: somebody set us up the bomb.\n", sig);
-	printf("[-] interrupted by SIGINT, trying to quit.\n");
+	/* somebody set us up the bomb. */
+	FATAL("interrupted by SIGINT, trying to quit.\n");
 	++plzdie;
 }
