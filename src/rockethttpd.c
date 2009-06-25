@@ -20,6 +20,10 @@
 #define opt_in(i,s1,s2) (!strcmp(argv[i],s1) || !strcmp(argv[i],s2))
 
 static int plzdie = 0;
+static int debug = 0;
+static pthread_attr_t attr;
+static pthread_t client_thr;
+
 
 void usage(char *prog);
 void exiting();
@@ -48,7 +52,8 @@ int main(int argc, char **argv) {
 		if( opt_in(i, "-h", "--help") ) {
 	    	usage(argv[0]);
 	    	return 1;
-
+		} else if( opt_in(i, "-d", "--no-fork") ) {
+			++debug;
 		} else if( opt_in(i, "-c", "--config") ) {
 			if (++i < argc) {
 				if (strlen(argv[i]) < sizeof(files[0]) ) strcpy(configfile, argv[i]);
@@ -172,14 +177,11 @@ int main(int argc, char **argv) {
 
 	/* set up threading */
 
-	size_t stacksize = 204800;
-	pthread_attr_t attr;
 	/* initialize and set thread detached attribute */
+	size_t stacksize = 204800;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	pthread_attr_setstacksize(&attr, stacksize);
-
-	pthread_t client_thr;
 
 	int cork_on = 1, sockopterr;
 
@@ -242,8 +244,9 @@ void usage(char *prog) {
 	INFO("\t%s [options] action\n", prog);
 
 	INFO("options:\n");
-	INFO("\t-h          --help          show this help and exit\n");
+	INFO("\t-h        --help            show this help and exit\n");
 	INFO("\t-c file   --config file     read configuration from 'file'\n");
+	INFO("\t-d        --no-fork	        prevents the daemon from forking to the background\n");
 
     INFO("actions:\n");
     INFO("\tstart                       start httpd\n");

@@ -5,6 +5,7 @@ static const char *timefmt = "%a, %d %b %Y %T %z";
 
 void *dispatch_request(void *arg) {
 	connection c;
+	memset(&c, 0, sizeof(connection));
 
 	/* our 'connection' needs to know who we are connected to */
 	c.conn = (connection_data *) arg;
@@ -73,7 +74,7 @@ void *dispatch_request(void *arg) {
 			/* otherwise, send the data buffer. */
 			nbytes = c.response.content_size;
 			if( sendall(c.conn->socket, c.response.data, &nbytes) < 0) {
-				ERROR("sendall: %s\n", strerror(errno));
+				ERROR("sendall(): %s\n", strerror(errno));
 			}
 		}
 		out+=nbytes;
