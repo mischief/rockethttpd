@@ -62,6 +62,7 @@ void *dispatch_request(void *arg) {
 		/* send off the content, gogo! */
 		if(c.response.sendfile > 0) {
 			/* if we were instructed to send a file, use senfile(). */
+#if defined(__linux) || defined(__linux)
 			nbytes = sendfile(c.conn->socket, c.response.file, 0, c.response.content_size);
 			if(nbytes <= 0) {
 				ERROR("sendfile(): %s\n", strerror(errno));
@@ -69,6 +70,15 @@ void *dispatch_request(void *arg) {
 			if(nbytes != c.response.content_size) {
 				ERROR("sendfile(): transfer size mismatch: size %zu - sent %d\n", c.response.content_size, nbytes);
 			}
+#else
+      nbytes = copyfile(c.response.file, c.conn->socket);
+			if(nbytes <= 0) {
+				ERROR("copyfile(): %s\n", strerror(errno));
+			}
+			if(nbytes != c.response.content_size) {
+				ERROR("copyfile(): transfer size mismatch: size %zu - sent %d\n", c.response.content_size, nbytes);
+			}
+#endif
 			close(c.response.file);
 		} else {
 			/* otherwise, send the data buffer. */

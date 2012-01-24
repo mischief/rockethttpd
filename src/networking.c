@@ -19,13 +19,56 @@ char *get_ip_str(const struct sockaddr *sa, char *s, size_t maxlen) {
     return s;
 }
 
+// copy all of fromfd to tofd
+int copyfile(int fromfd, int tofd) {
+#define BLKSIZE 1024
+  char *bp;
+  char buf[BLKSIZE];
+
+  // bytes read and wrote
+  int bread, bwrite;
+
+  int total = 0;
+
+  for(;;) {
+    while(((bread = read(fromfd, buf, BLKSIZE)) == -1) && (errno == EINTR));
+
+    if(bread <= 0)
+      break; // real error of end of file on fromfd
+
+    bp = buf;
+
+    while(bread > 0) {
+      while(((bwrite = write(tofd, bp, bread)) == -1) && (errno == EINTR));
+
+      if(bwrite <= 0)
+        break;
+
+      total += bwrite;
+      bread -= bwrite;
+      bp += bwrite;
+    }
+
+    if(bwrite == -1)
+      break;
+  } // ! for(;;)
+
+  return total;
+}
+
 int sendall(int s, char *buf, int *len) {
 	int total = 0;        /* how many bytes we've sent */
 	int bytesleft = *len; /* how many we have left to send */
 	int n = 0;
 
 	while(total < *len) {
+
+#ifdef MSG_NOSIGNAL
 		n = send(s, buf+total, bytesleft, MSG_NOSIGNAL);
+#else
+		n = send(s, buf+total, bytesleft, 0);
+#endif
+
 		if (n <= 0) {
 			/* well, either the connection died or we have an error. */
 			break;

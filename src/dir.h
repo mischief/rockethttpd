@@ -18,10 +18,12 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include <dirent.h>
+
 /* here we read the contents of the directory
  * dir, and write a nice layout in buf. */
 
-const int make_dir_list(connection *ret);
+int make_dir_list(connection *ret);
 
 const char *icon_from_fname(const char *filename);
 

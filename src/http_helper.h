@@ -11,7 +11,7 @@
 
 /* get the method type of the HTTP request */
 
-const http_request_type get_request_type(const char *str);
+http_request_type get_request_type(const char *str);
 
 /* this returns a mime type based on the resource given,
  * by checking the file extension at the end.

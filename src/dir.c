@@ -100,7 +100,7 @@ static const struct {
 	{0}
 };
 
-const int make_dir_list(connection *ret) {
+int make_dir_list(connection *ret) {
 	char buf[8 * KILOBYTE] = {0};
 	struct stat stattmp;
 	struct dirent **filelist;
@@ -138,11 +138,17 @@ const int make_dir_list(connection *ret) {
 	url_decode(buf, ret->req.resource+1);
 	strcat(dir, buf);
 
+#ifdef _GNU_SOURCE
+  int (*compar)(const struct dirent **, const struct dirent **) = versionsort;
+#else
+  int (*compar)(const void*, const void*) = alphasort;
+#endif
+
 	// filter out ".." if we are in /
 	if( strncmp(dir, "./", 3) ) {
-		filecount = scandir(dir, &filelist, yesparent, versionsort);
+		filecount = scandir(dir, &filelist, yesparent, compar);
 	} else {
-		filecount = scandir(dir, &filelist, noparent, versionsort);
+		filecount = scandir(dir, &filelist, noparent, compar);
 	}
 
 	if(filecount >= 0) {

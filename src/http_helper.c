@@ -51,7 +51,7 @@ static const MIMEtype mime_types[] = {
 	{0,0}
 };
 
-const http_request_type get_request_type(const char *str) {
+http_request_type get_request_type(const char *str) {
 	int i = 0;
 	for(i = 0; methods[i].method != NULL; ++i) {
 		if( !strncasecmp(str, methods[i].method, 10) )  {

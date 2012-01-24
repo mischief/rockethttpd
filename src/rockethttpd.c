@@ -130,7 +130,8 @@ int main(int argc, char **argv) {
 
 	memset(&hints, 0, sizeof(hints));
 	// set up hints struct for getaddrinfo()
-	hints.ai_family = AF_UNSPEC;
+  //hints.ai_family = AF_UNSPEC;
+	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
@@ -205,10 +206,11 @@ int main(int argc, char **argv) {
 		x = accept(serv_sock, (struct sockaddr *)&client, &client_socksize);
 
 		if(x > -1) {
-
+#ifdef TCP_CORK
 			sockopterr = setsockopt(x, IPPROTO_TCP, TCP_CORK, &cork_on, sizeof(cork_on));
 			if(sockopterr < 0)
 				ERROR("setsockopt(): %s\n", strerror(errno));
+#endif
 
 			connection_data *p = malloc(sizeof(*p));
 
