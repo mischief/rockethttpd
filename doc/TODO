@@ -21,3 +21,5 @@ DONE!	make files transfers buffered, don't load the whole file into memory befor
 *	add the ability to fork to the background
 
 *	fix urlencoding of generated links in directory listing
+
+*       apply gained knowledge to improve software
