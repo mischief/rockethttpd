@@ -1,6 +1,7 @@
 #ifndef COMMON_TYPES_H
 #define COMMON_TYPES_H
 
+#include <limits.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>

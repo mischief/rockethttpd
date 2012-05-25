@@ -5,10 +5,11 @@ DEBUGFLAG =-g -DDEBUG=1
 # -pthread sets macros and sets linker flags
 PTHREAD =-pthread
 # -march parameter
-MARCH =-march=native
+#MARCH =-march=native
 # link with math library
-LIBS =-lm
-DEFINES =-D_POSIX_C_SOURCE=199506L -D_BSD_SOURCE
+#LIBS =-lm
+DEFINES = -D_BSD_SOURCE
+#DEFINES =-D_POSIX_C_SOURCE=199506L -D_BSD_SOURCE
 #DEFINES =-D_POSIX_C_SOURCE=199506L -D_GNU_SOURCE
 CFLAGS :=-Wall -fstack-protector -std=gnu99 $(DEFINES) $(MARCH) $(PTHREAD) $(XTRAFLAGS)
 # final executeable name
