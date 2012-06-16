@@ -21,5 +21,5 @@ env.Append(CPPFLAGS = '-Isrc', CPPDEFINES = ['_GNU_SOURCE=1', '_REENTRANT=1'])
 
 files = Glob('src/*.c')
 
-env.Program('rockethttpd', files)
+env.Program('rockethttpd', files, LIBS = ['pthread', 'm'])
 

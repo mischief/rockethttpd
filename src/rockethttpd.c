@@ -184,7 +184,9 @@ int main(int argc, char **argv) {
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	pthread_attr_setstacksize(&attr, stacksize);
 
-	/* int cork_on = 1, sockopterr; */
+#ifdef TCP_CORK
+	int cork_on = 1, sockopterr;
+#endif
 
 	/* now set up the listening socket */
 
@@ -208,8 +210,9 @@ int main(int argc, char **argv) {
 		if(x > -1) {
 #ifdef TCP_CORK
 			sockopterr = setsockopt(x, IPPROTO_TCP, TCP_CORK, &cork_on, sizeof(cork_on));
-			if(sockopterr < 0)
+			if(sockopterr < 0) {
 				ERROR("setsockopt(): %s\n", strerror(errno));
+			}
 #endif
 
 			connection_data *p = malloc(sizeof(*p));

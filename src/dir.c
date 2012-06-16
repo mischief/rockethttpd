@@ -138,7 +138,7 @@ int make_dir_list(connection *ret) {
 	url_decode(buf, ret->req.resource+1);
 	strcat(dir, buf);
 
-#ifdef _GNU_SOURCE
+#if defined(_GNU_SOURCE) && !defined(__APPLE__)
   int (*compar)(const struct dirent **, const struct dirent **) = versionsort;
 #else
   int (*compar)(const void*, const void*) = alphasort;
