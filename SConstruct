@@ -5,6 +5,7 @@ opts = Variables('scache.conf')
 
 opts.AddVariables(
   BoolVariable('debug', 'Enable debugging symbols', False),
+  BoolVariable('fancy', 'Enable images in directory listings', False),  
 )
 
 env = Environment(options = opts, ENV = os.environ)
@@ -14,6 +15,10 @@ opts.Save('scache.conf', env)
 if env['debug']:
   env.Append(CFLAGS = ' -g -O0 -fkeep-inline-functions -finline-functions ')
   env.Append(CPPDEFINES = 'DEBUG')
+
+if env['fancy']:
+  env.Append(CPPDEFINES = 'FANCY')
+
 
 env.Append(CPPFLAGS=['-Wall','-Wextra','-std=c99','-pthread','-pipe'])
 
