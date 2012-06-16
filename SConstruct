@@ -17,7 +17,7 @@ if env['debug']:
 
 env.Append(CPPFLAGS=['-Wall','-Wextra','-std=c99','-pthread','-pipe'])
 
-env.Append(CPPFLAGS = '-Isrc')
+env.Append(CPPFLAGS = '-Isrc', DEFINES = ['_BSD_SOURCE'])
 
 files = Glob('src/*.c')
 
