@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 		{ "WWWROOT", &root, PATH_MAX, 's' },
 		{ "PIDFILE", &pidfile, FILENAME_MAX, 's' },
 		{ "THREADS", &threadcount, 0, 'z' },
-		{0}
+		{0, 0, 0, 0}
 	};
 
 	if(configfile[0] != 0) {
@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	pthread_attr_setstacksize(&attr, stacksize);
 
-	int cork_on = 1, sockopterr;
+	/* int cork_on = 1, sockopterr; */
 
 	/* now set up the listening socket */
 
@@ -261,6 +261,7 @@ void exiting() {
 }
 
 void die (int sig) {
+        (void) sig;
 	/* somebody set us up the bomb. */
 	FATAL("interrupted by SIGINT, trying to quit.\n");
 	++plzdie;

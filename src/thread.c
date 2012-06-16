@@ -19,7 +19,7 @@ void *dispatch_request(void *arg) {
 
 	/* print_con_dat(c.conn); printf("connection established\n"); */
 
-	int in = 0,	/* bytes in */
+	size_t in = 0,	/* bytes in */
 	out = 0,	/* bytes out */
 	nbytes = 0;
 
@@ -98,7 +98,7 @@ void *dispatch_request(void *arg) {
 	strftime(buf, sizeof(buf), timefmt, localtime_r(&sec, &now));
 
 	/* print out connection summary */
-	printf("[%c] %s [%s] %d %dB \"%s\"\n", c.response.status == 200 ? 'o' : '~', c.conn->clientip, buf, c.response.status, nbytes, c.req.resource);
+	printf("[%c] %s [%s] %d %zuB \"%s\"\n", c.response.status == 200 ? 'o' : '~', c.conn->clientip, buf, c.response.status, nbytes, c.req.resource);
 
 	fflush(NULL);
 	/* clean up! */

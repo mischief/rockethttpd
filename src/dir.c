@@ -320,13 +320,13 @@ int exist_index(connection *ret) {
 	return 0;
 }
 
-int noparent(const struct dirent *entry) {
+int noparent(struct dirent *entry) {
 	if( strncmp(entry->d_name, "..", 3) == 0) return 0;
 	if( strncmp(entry->d_name, ".", 2) == 0) return 0;
 	return 1;
 }
 
-int yesparent(const struct dirent *entry) {
+int yesparent(struct dirent *entry) {
 	if( strncmp(entry->d_name, ".", 3) == 0) return 0;
 	return 1;
 }

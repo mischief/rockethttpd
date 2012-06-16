@@ -19,7 +19,7 @@ char *get_ip_str(const struct sockaddr *sa, char *s, size_t maxlen);
 int copyfile(int fromfd, int tofd);
 
 /* thanks beej! */
-int sendall(int s, char *buf, int *len);
+int sendall(int s, char *buf, size_t *len);
 
 void print_con_dat(connection_data *c);
 

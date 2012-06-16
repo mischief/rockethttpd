@@ -31,8 +31,8 @@ const char *get_suffx_from_size(unsigned long bytes, float *floaty);
 
 int exist_index(connection *ret);
 
-int noparent(const struct dirent *entry);
+int noparent(struct dirent *entry);
 
-int yesparent(const struct dirent *entry);
+int yesparent(struct dirent *entry);
 
 #endif

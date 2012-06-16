@@ -15,7 +15,7 @@
 /* this is a pointer to the data recieved from the client.
  * the length of the data recieved from the client.
  * this is a pointer to the memory that will store our data. */
-const int parse_http_request(char *, const size_t, connection *);
+int parse_http_request(char *, const size_t, connection *);
 
 /*	this is a big guy.
 	what this does is first urldecode the URL,
@@ -23,12 +23,12 @@ const int parse_http_request(char *, const size_t, connection *);
 	at this point in time i do not know what will happen if
 	the file cannot be read, either due to permissions or if it doesn't exist.. */
 
-const int fulfill_request(connection *);
+int fulfill_request(connection *);
 
 /*	this guy is a helper to fulfill_request,
 	it simply reads the file into a fat buffer. */
 
-const int get_that_file(connection *);
+int get_that_file(connection *);
 
 /*	this little guy is just here to clean up after all my malloc'ing.
 	make sure this is called. it is responsible for EVERYTHING. */

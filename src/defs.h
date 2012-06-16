@@ -2,10 +2,10 @@
 #define DEFS_H
 
 #define PROGRAM	"Rocket HTTPD"
-#define VERSION	"v0.1.8"
+#define VERSION	"v0.2.0"
 #define AUTHOR	"mischief"
-#define EMAIL	"<this.is.srs.bsns@gmail.com>"
-#define SOURCE	"http://code.google.com/p/rockethttpd/"
+#define EMAIL	"<mischief@offblast.org>"
+#define SOURCE	"https://github.com/mischief/rockethttpd/"
 #define VERSTRING PROGRAM " " VERSION " by " AUTHOR " " EMAIL " " SOURCE
 
 #define UNIX_NAME "rockethttpd"

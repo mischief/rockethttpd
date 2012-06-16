@@ -14,7 +14,7 @@ extern const char *error_skel;
 extern const char *fallback_mime;
 extern const MIMEtype mime_types[];
 
-const int parse_http_request(char *data, const size_t len, connection *ret) {
+int parse_http_request(char *data, const size_t len, connection *ret) {
 	ret->response.status = HTTP_OK;
 
 	char *tok, *state;
@@ -76,7 +76,7 @@ const int parse_http_request(char *data, const size_t len, connection *ret) {
 	return 0;
 } // end of parse_http_request
 
-const int fulfill_request(connection *ret) {
+int fulfill_request(connection *ret) {
 	http_status_code status = HTTP_OK;
 
 	/* a bit kludge-ish, fix this later */
@@ -99,7 +99,7 @@ const int fulfill_request(connection *ret) {
 	}
 
 	// create a header
-	ret->response.header_size = asprintf(&ret->response.header, reply_header, http_code_to_str(status), ret->response.mimetype, ret->response.content_size, PROGRAM " " VERSION);
+	ret->response.header_size = asprintf(&ret->response.header, reply_header, http_code_to_str(status), ret->response.mimetype, ret->response.content_size, UNIX_NAME " " VERSION);
 	if(ret->response.header_size <= 0 ) {
 		ret->response.status = HTTP_INTERNAL_ERROR;
 		error_code_to_data( &(ret->response) );
@@ -109,7 +109,7 @@ const int fulfill_request(connection *ret) {
 	return 0;
 } // end of fulfill_request
 
-const int get_that_file(connection *ret) {
+int get_that_file(connection *ret) {
 	char buf[8 * KILOBYTE];
 	memset(buf, 0, sizeof(buf));
 
