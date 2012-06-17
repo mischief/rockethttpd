@@ -140,10 +140,10 @@ int make_dir_list(connection *ret) {
 	url_decode(buf, ret->req.resource+1);
 	strcat(dir, buf);
 
-#if defined(_GNU_SOURCE) && !defined(__APPLE__)
+#if defined(_GNU_SOURCE) && !defined(__APPLE__) && !defined(__OpenBSD__)
   int (*compar)(const struct dirent **, const struct dirent **) = versionsort;
 #else
-  int (*compar)(const void*, const void*) = alphasort;
+  int (*compar)(const struct dirent **, const struct dirent **) = alphasort;
 #endif
 
 	// filter out ".." if we are in /

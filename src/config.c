@@ -3,7 +3,7 @@
 int parse_config_file(const char *path, config_item *conf) {
 	FILE *f;
 	char buf[256];
-	char id[32];
+	char id[33];
 	char data[100];
 	int line = 0;
 	config_item *item;
