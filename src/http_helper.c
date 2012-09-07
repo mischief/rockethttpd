@@ -129,3 +129,28 @@ const char *http_code_to_str(const http_status_code x) {
 		break;
 	}
 }
+
+char to_hex(char code) {
+	static char hex[] = "0123456789abcdef";
+	return hex[code & 15];
+}
+
+/* Returns a url-encoded version of str */
+/* IMPORTANT: be sure to free() the returned string after use */
+char *url_encode(char *str) {
+	char *p = str, *buf = malloc(strlen(str) * 3 + 1), *pbuf = buf;
+	while (*p) {
+		if (isalnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == '~')
+			*pbuf++ = *p;
+		else if (*p == ' ')
+			*pbuf++ = '+';
+		else
+			*pbuf++ = '%', *pbuf++ = to_hex(*p >> 4), *pbuf++ = to_hex(*p & 15);
+		p++;
+	}
+	*pbuf = '\0';
+	return buf;
+}
+
+
+
