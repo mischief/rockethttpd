@@ -140,10 +140,10 @@ char to_hex(char code) {
 char *url_encode(char *str) {
 	char *p = str, *buf = malloc(strlen(str) * 3 + 1), *pbuf = buf;
 	while (*p) {
-		if (isalnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == '~')
+		if (isalnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == '~' || *p == '/')
 			*pbuf++ = *p;
-		else if (*p == ' ')
-			*pbuf++ = '+';
+//		else if (*p == ' ')
+//			*pbuf++ = '+';
 		else
 			*pbuf++ = '%', *pbuf++ = to_hex(*p >> 4), *pbuf++ = to_hex(*p & 15);
 		p++;

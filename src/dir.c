@@ -195,11 +195,17 @@ int make_dir_list(connection *ret) {
 			/* 7. put in buffer, order = icon, filename, time modified, size */
 			/* put all the directory data into the div tags */
 			int len;
+
+			char *encoded = url_encode(filenamebuf);
+
 			if( strcmp(filenamebuf, "../") == 0) {
-				len = asprintf(&entries[cnt], dir_entry, "arrow", filenamebuf, "Parent Directory", "", sizebuf, "");
+				len = asprintf(&entries[cnt], dir_entry, "arrow", encoded, "Parent Directory", "", sizebuf, "");
 			} else {
-				len = asprintf(&entries[cnt], dir_entry, iconbuf, filenamebuf, filenamebuf, timestampbuf, sizebuf, suffix);
+				len = asprintf(&entries[cnt], dir_entry, iconbuf, encoded, filenamebuf, timestampbuf, sizebuf, suffix);
 			}
+
+			free(encoded);
+
 			entrieslen += len + 1;
 
 			/* free the linked list and file name buffer */
