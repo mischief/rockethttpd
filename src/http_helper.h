@@ -4,8 +4,8 @@
 #include "defs.h"
 #include <string.h>
 #include <stdlib.h>
-
 #include <strings.h>
+#include <ctype.h>
 
 #include "common_types.h"
 
@@ -28,5 +28,15 @@ void url_decode(char *dest, const char *src);
 	 this one gives us a header string depending on the http code. */
 
 const char *http_code_to_str(const http_status_code x);
+
+
+/* Converts an integer value to its hex character*/
+char to_hex(char code);
+
+/* Returns a url-encoded version of str */
+/* IMPORTANT: be sure to free() the returned string after use */
+char *url_encode(char *str);
+
+
 
 #endif
