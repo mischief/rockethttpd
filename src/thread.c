@@ -1,5 +1,9 @@
 #include "thread.h"
 
+#if defined(__linux) || defined(__linux)
+#include <sys/sendfile.h>
+#endif
+
 /* rfc 822 conformant */
 static const char *timefmt = "%a, %d %b %Y %T %z";
 
@@ -68,7 +72,7 @@ void *dispatch_request(void *arg) {
 				ERROR("sendfile(): %s\n", strerror(errno));
 			}
 			if(nbytes != c.response.content_size) {
-				ERROR("sendfile(): transfer size mismatch: size %zu - sent %d\n", c.response.content_size, nbytes);
+				ERROR("sendfile(): transfer size mismatch: size %zu - sent %zu\n", c.response.content_size, nbytes);
 			}
 #else
       nbytes = copyfile(c.response.file, c.conn->socket);
@@ -76,7 +80,7 @@ void *dispatch_request(void *arg) {
 				ERROR("copyfile(): %s\n", strerror(errno));
 			}
 			if(nbytes != c.response.content_size) {
-				ERROR("copyfile(): transfer size mismatch: size %zu - sent %d\n", c.response.content_size, nbytes);
+				ERROR("copyfile(): transfer size mismatch: size %zu - sent %zu\n", c.response.content_size, nbytes);
 			}
 #endif
 			close(c.response.file);

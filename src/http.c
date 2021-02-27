@@ -14,14 +14,16 @@ extern const char *error_skel;
 extern const char *fallback_mime;
 extern const MIMEtype mime_types[];
 
-int parse_http_request(char *data, const size_t len, connection *ret) {
-	ret->response.status = HTTP_OK;
+static const char crlf[] = "\r\n";
 
+int parse_http_request(char *data, const size_t len, connection *ret) {
 	char *tok, *state;
 	char *subtok, *substate;
-
-	char crlf[] = "\r\n";
 	int line = 0;
+
+	(void)len;
+
+	ret->response.status = HTTP_OK;
 
 	while( (tok = strtok_r(data, crlf, &state)) != NULL ) {
 		if(line == 0) {

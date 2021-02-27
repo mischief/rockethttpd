@@ -156,7 +156,7 @@ int make_dir_list(connection *ret) {
 	if(filecount >= 0) {
 		int cnt;
 		entries = malloc(filecount * sizeof(*entries));
-		memset(entries, 0, sizeof(entries));
+		memset(entries, 0, filecount * sizeof(entries));
 
 		for(cnt = 0; cnt < filecount; ++cnt) {
 			char statbuf[1024];
@@ -328,13 +328,13 @@ int exist_index(connection *ret) {
 	return 0;
 }
 
-int noparent(struct dirent *entry) {
+int noparent(const struct dirent *entry) {
 	if( strncmp(entry->d_name, "..", 3) == 0) return 0;
 	if( strncmp(entry->d_name, ".", 2) == 0) return 0;
 	return 1;
 }
 
-int yesparent(struct dirent *entry) {
+int yesparent(const struct dirent *entry) {
 	if( strncmp(entry->d_name, ".", 3) == 0) return 0;
 	return 1;
 }
